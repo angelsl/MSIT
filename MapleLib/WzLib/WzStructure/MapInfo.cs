@@ -1,38 +1,94 @@
-﻿/*  MapleLib - A general-purpose MapleStory library
- * Copyright (C) 2009, 2010 Snow and haha01haha01
-   
- * This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
- * This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
-
+﻿// This file is part of MSreinator. This file may have been taken from other applications and libraries.
+// 
+// MSreinator is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// MSreinator is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MSreinator.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using MapleLib.WzLib;
-using MapleLib.WzLib.WzProperties;
-//using HaCreator.Helpers;
-using MapleLib.WzLib.WzStructure.Data;
-using MapleLib.WzLib.WzStructure;
 using System.Drawing;
 using MapleLib.Helpers;
+using MapleLib.WzLib.WzStructure.Data;
+//using HaCreator.Helpers;
 
 namespace MapleLib.WzLib.WzStructure
 {
     public class MapInfo //Credits to Bui
     {
-
-
         public static MapInfo Default = new MapInfo();
+
+        public string MapMark = "None";
+        public Rectangle? VR;
+        public MapleBool VRLimit = null; //use vr's as limits?
+        public List<IWzImageProperty> additionalProps = new List<IWzImageProperty>();
+        public MapleBool allMoveCheck = null; //another JQ hack protection
+        public List<int> allowedItems;
+        public AutoLieDetector? autoLieDetector;
+        public string bgm = "Bgm00/GoPicnic";
+        public MapleBool blockPBossChange = null; //something with monster carnival
+        public bool cloud;
+        public MapleBool consumeItemCoolTime = null; //cool time of consume item
+        public int? createMobInterval; //used for massacre pqs
+        public MapleBool damageCheckFree = null; //something with fishing event
+        public int? decHP;
+        public int? decInterval;
+        public int? dropExpire; //in seconds
+        public float? dropRate;
+        public string effect; //Bubbling; 610030550 and many others
+        public MapleBool entrustedShop = null;
+        public MapleBool everlast = null; //something with bonus stages of PQs
+        public MapleBool expeditionOnly = null;
+        public FieldLimit fieldLimit = FieldLimit.FIELDOPT_NONE;
+        public FieldType? fieldType;
+        public int? fixedMobCapacity; //mob capacity to target (used for massacre pqs)
+        public MapleBool fly = null;
+        public int forcedReturn = 999999999;
+        public float? fs; //slip on ice speed, default 0.2
+        public string help; //help string
+        public bool hideMinimap;
+        public int id;
+        public int? lvForceMove; //limit FROM value
+        public int? lvLimit;
+
+        //Unknown optional
+        public string mapDesc;
+        public string mapName;
+        public MapType mapType = MapType.RegularMap;
+        public MapleBool miniMapOnOff = null;
+        public float mobRate = 1.5f;
+        public int? moveLimit;
+        public MapleBool needSkillForFly = null;
+        public MapleBool noMapCmd = null;
+        public MapleBool noRegenMap = null; //610030400
+        public string onFirstUserEnter;
+        public string onUserEnter;
+        public MapleBool partyOnly = null;
+        public MapleBool personalShop = null;
+        public int? protectItem; //ID, item protecting from cold
+        public MapleBool rain = null;
+        public MapleBool reactorShuffle = null;
+        public string reactorShuffleName;
+        public float? recovery; //recovery rate, like in sauna (3)
+        public int returnMap = 999999999;
+        public MapleBool scrollDisable = null;
+        public MapleBool snow = null;
+        public string strMapName = "<Untitled>";
+        public string strStreetName = "<Untitled>";
+        public string streetName;
+        public bool swim;
+        public int? timeLimit;
+        public TimeMob? timeMob;
+        public bool town;
+        public int version = 10;
+        public MapleBool zakum2Hack = null; //JQ hack protection
 
         public MapInfo()
         {
@@ -44,7 +100,8 @@ namespace MapleLib.WzLib.WzStructure
             int? endHour;
             this.strMapName = strMapName;
             this.strStreetName = strStreetName;
-            foreach (IWzImageProperty prop in image["info"].WzProperties) switch (prop.Name)
+            foreach (IWzImageProperty prop in image["info"].WzProperties)
+                switch (prop.Name)
                 {
                     case "bgm":
                         bgm = InfoTool.GetString(prop);
@@ -84,9 +141,9 @@ namespace MapleLib.WzLib.WzStructure
                         break;
                     case "fieldLimit":
                         int fl = InfoTool.GetInt(prop);
-                        if (fl >= (int)Math.Pow(2, 23))
-                            fl = fl & ((int)Math.Pow(2, 23) - 1);
-                        fieldLimit = (FieldLimit)fl;
+                        if (fl >= (int) Math.Pow(2, 23))
+                            fl = fl & ((int) Math.Pow(2, 23) - 1);
+                        fieldLimit = (FieldLimit) fl;
                         break;
                     case "VRTop":
                     case "VRBottom":
@@ -119,9 +176,9 @@ namespace MapleLib.WzLib.WzStructure
                         break;
                     case "fieldType":
                         int ft = InfoTool.GetInt(prop);
-                        if (!Enum.IsDefined(typeof(FieldType), ft))
+                        if (!Enum.IsDefined(typeof (FieldType), ft))
                             ft = 0;
-                        fieldType = (FieldType)ft;
+                        fieldType = (FieldType) ft;
                         break;
                     case "miniMapOnOff":
                         miniMapOnOff = InfoTool.GetBool(prop);
@@ -152,12 +209,13 @@ namespace MapleLib.WzLib.WzStructure
                         if (id == null || message == null || (startHour == null ^ endHour == null))
                         {
                             //System.Windows.Forms.MessageBox.Show("Warning", "Warning - incorrect timeMob structure in map data. Skipped and error log was saved.");
-                            WzFile file = (WzFile)image.WzFileParent;
+                            var file = (WzFile) image.WzFileParent;
                             if (file != null)
-                                ErrorLogger.Log(ErrorLevel.IncorrectStructure, "timeMob, map " + image.Name + " of version " + Enum.GetName(typeof(WzMapleVersion), file.MapleVersion) + ", v" + file.Version.ToString());
+                                ErrorLogger.Log(ErrorLevel.IncorrectStructure,
+                                                "timeMob, map " + image.Name + " of version " + Enum.GetName(typeof (WzMapleVersion), file.MapleVersion) + ", v" + file.Version);
                         }
                         else
-                            timeMob = new TimeMob((int?)startHour, (int?)endHour, (int)id, message);
+                            timeMob = new TimeMob(startHour, endHour, (int) id, message);
                         break;
                     case "help":
                         help = InfoTool.GetString(prop);
@@ -185,12 +243,13 @@ namespace MapleLib.WzLib.WzStructure
                         if (startHour == null || endHour == null || interval == null || propInt == null)
                         {
                             //System.Windows.Forms.MessageBox.Show("Warning", "Warning - incorrect autoLieDetector structure in map data. Skipped and error log was saved.");
-                            WzFile file = (WzFile)image.WzFileParent;
+                            var file = (WzFile) image.WzFileParent;
                             if (file != null)
-                                ErrorLogger.Log(ErrorLevel.IncorrectStructure, "autoLieDetector, map " + image.Name + " of version " + Enum.GetName(typeof(WzMapleVersion), file.MapleVersion) + ", v" + file.Version.ToString());
+                                ErrorLogger.Log(ErrorLevel.IncorrectStructure,
+                                                "autoLieDetector, map " + image.Name + " of version " + Enum.GetName(typeof (WzMapleVersion), file.MapleVersion) + ", v" + file.Version);
                         }
                         else
-                            autoLieDetector = new AutoLieDetector((int)startHour, (int)endHour, (int)interval, (int)propInt);
+                            autoLieDetector = new AutoLieDetector((int) startHour, (int) endHour, (int) interval, (int) propInt);
                         break;
                     case "expeditionOnly":
                         expeditionOnly = InfoTool.GetBool(prop);
@@ -217,7 +276,7 @@ namespace MapleLib.WzLib.WzStructure
                         allowedItems = new List<int>();
                         if (prop.WzProperties != null && prop.WzProperties.Count > 0)
                             foreach (IWzImageProperty item in prop.WzProperties)
-                                allowedItems.Add((int)item);
+                                allowedItems.Add((int) item);
                         break;
                     case "recovery":
                         recovery = InfoTool.GetFloat(prop);
@@ -267,86 +326,32 @@ namespace MapleLib.WzLib.WzStructure
             }
         }
 
-        //Cannot change
-        public int version = 10;
+        #region Nested type: AutoLieDetector
 
-        //Must have
-        public string bgm = "Bgm00/GoPicnic";
-        public string MapMark = "None";
-        public FieldLimit fieldLimit = FieldLimit.FIELDOPT_NONE;
-        public int returnMap = 999999999;
-        public int forcedReturn = 999999999;
-        public bool cloud = false;
-        public bool swim = false;
-        public bool hideMinimap = false;
-        public bool town = false;
-        public float mobRate = 1.5f;
+        public struct AutoLieDetector
+        {
+            public int endHour, interval, prop; //interval in mins, prop default = 80
+            public int startHour; //interval in mins, prop default = 80
 
-        //Optional
-        //public int link = -1;
-        public int? timeLimit = null;
-        public int? lvLimit = null;
-        public FieldType? fieldType = null;
-        public string onFirstUserEnter = null;
-        public string onUserEnter = null;
-        public MapleBool fly = null;
-        public MapleBool noMapCmd = null;
-        public MapleBool partyOnly = null;
-        public MapleBool reactorShuffle = null;
-        public string reactorShuffleName = null;
-        public MapleBool personalShop = null;
-        public MapleBool entrustedShop = null;
-        public string effect = null; //Bubbling; 610030550 and many others
-        public int? lvForceMove = null; //limit FROM value
-        public TimeMob? timeMob = null;
-        public string help = null; //help string
-        public MapleBool snow = null;
-        public MapleBool rain = null;
-        public int? dropExpire = null; //in seconds
-        public int? decHP = null;
-        public int? decInterval = null;
-        public AutoLieDetector? autoLieDetector = null;
-        public MapleBool expeditionOnly = null;
-        public float? fs = null; //slip on ice speed, default 0.2
-        public int? protectItem = null; //ID, item protecting from cold
-        public int? createMobInterval = null; //used for massacre pqs
-        public int? fixedMobCapacity = null; //mob capacity to target (used for massacre pqs)
+            public AutoLieDetector(int startHour, int endHour, int interval, int prop)
+            {
+                this.startHour = startHour;
+                this.endHour = endHour;
+                this.interval = interval;
+                this.prop = prop;
+            }
+        }
 
-        //Unknown optional
-        public int? moveLimit = null;
-        public string mapDesc = null;
-        public string mapName = null;
-        public string streetName = null;
-        public MapleBool miniMapOnOff = null;
-        public MapleBool noRegenMap = null; //610030400
-        public List<int> allowedItems = null;
-        public float? recovery = null; //recovery rate, like in sauna (3)
-        public MapleBool blockPBossChange = null; //something with monster carnival
-        public MapleBool everlast = null; //something with bonus stages of PQs
-        public MapleBool damageCheckFree = null; //something with fishing event
-        public float? dropRate = null;
-        public MapleBool scrollDisable = null;
-        public MapleBool needSkillForFly = null;
-        public MapleBool zakum2Hack = null; //JQ hack protection
-        public MapleBool allMoveCheck = null; //another JQ hack protection
-        public MapleBool VRLimit = null; //use vr's as limits?
-        public MapleBool consumeItemCoolTime = null; //cool time of consume item
+        #endregion
 
-        //Special
-        public Rectangle? VR = null;
-        public List<IWzImageProperty> additionalProps = new List<IWzImageProperty>();
-        public string strMapName = "<Untitled>";
-        public string strStreetName = "<Untitled>";
-        public int id = 0;
-
-        //Editor related, not actual properties
-        public MapType mapType = MapType.RegularMap;
+        #region Nested type: TimeMob
 
         public struct TimeMob
         {
-            public int? startHour, endHour;
+            public int? endHour;
             public int id;
             public string message;
+            public int? startHour;
 
             public TimeMob(int? startHour, int? endHour, int id, string message)
             {
@@ -357,17 +362,6 @@ namespace MapleLib.WzLib.WzStructure
             }
         }
 
-        public struct AutoLieDetector
-        {
-            public int startHour, endHour, interval, prop; //interval in mins, prop default = 80
-
-            public AutoLieDetector(int startHour, int endHour, int interval, int prop)
-            {
-                this.startHour = startHour;
-                this.endHour = endHour;
-                this.interval = interval;
-                this.prop = prop;
-            }
-        }
+        #endregion
     }
 }

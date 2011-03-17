@@ -1,58 +1,39 @@
-﻿/*  MP3Header - A class for reading MP3 headers
- * Copyright (C) 2009, 2010 Gustav "Grim Reaper" Munkby, Robert A. Wlodarczyk and haha01haha01
-   
- * This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
- * This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
-
-/* ----------------------------------------------------------
-
-   original C++ code by:
-                        Gustav "Grim Reaper" Munkby
-                        http://floach.pimpin.net/grd/
-                        grimreaperdesigns@gmx.net
-   
-   modified and converted to C# by:
-                        Robert A. Wlodarczyk
-                        http://rob.wincereview.com:8080
-                        rwlodarc@hotmail.com
-   ---------------------------------------------------------- */
-
-
-using System;
+﻿// This file is part of MSreinator. This file may have been taken from other applications and libraries.
+// 
+// MSreinator is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// MSreinator is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MSreinator.  If not, see <http://www.gnu.org/licenses/>.
 using System.IO;
 
 public class MP3Header
 {
     // Public variables for storing the information about the MP3
-    public int intBitRate;
-    public string strFileName;
-    public long lngFileSize;
-    public int intFrequency;
-    public string strMode;
-    public int intLength;
-    public string strLengthFormatted;
-
-    // Private variables used in the process of reading in the MP3 files
     private ulong bithdr;
     private bool boolVBitRate;
+    public int intBitRate;
+    public int intFrequency;
+    public int intLength;
     private int intVFrames;
+    public long lngFileSize;
+    public string strFileName;
+    public string strLengthFormatted;
+    public string strMode;
 
     public bool ReadMP3Information(string FileName)
     {
-        FileStream fs = new FileStream(FileName, FileMode.Open, FileAccess.Read);
+        var fs = new FileStream(FileName, FileMode.Open, FileAccess.Read);
         // Set the filename not including the path information
         strFileName = @fs.Name;
-        char[] chrSeparators = new char[] { '\\', '/' };
+        var chrSeparators = new[] {'\\', '/'};
         string[] strSeparator = strFileName.Split(chrSeparators);
         int intUpper = strSeparator.GetUpperBound(0);
         strFileName = strSeparator[intUpper];
@@ -63,8 +44,8 @@ public class MP3Header
         // Set the file size
         lngFileSize = fs.Length;
 
-        byte[] bytHeader = new byte[4];
-        byte[] bytVBitRate = new byte[12];
+        var bytHeader = new byte[4];
+        var bytVBitRate = new byte[12];
         int intPos = 0;
 
         // Keep reading 4 bytes from the header until we know for sure that in 
@@ -75,8 +56,7 @@ public class MP3Header
             fs.Read(bytHeader, 0, 4);
             intPos++;
             LoadMP3Header(bytHeader);
-        }
-        while (!IsValidHeader() && (fs.Position != fs.Length));
+        } while (!IsValidHeader() && (fs.Position != fs.Length));
 
         // If the current file stream position is equal to the length, 
         // that means that we've read the entire file and it's not a valid MP3 file
@@ -84,9 +64,9 @@ public class MP3Header
         {
             intPos += 3;
 
-            if (getVersionIndex() == 3)    // MPEG Version 1
+            if (getVersionIndex() == 3) // MPEG Version 1
             {
-                if (getModeIndex() == 3)    // Single Channel
+                if (getModeIndex() == 3) // Single Channel
                 {
                     intPos += 17;
                 }
@@ -95,9 +75,9 @@ public class MP3Header
                     intPos += 32;
                 }
             }
-            else                        // MPEG Version 2.0 or 2.5
+            else // MPEG Version 2.0 or 2.5
             {
-                if (getModeIndex() == 3)    // Single Channel
+                if (getModeIndex() == 3) // Single Channel
                 {
                     intPos += 9;
                 }
@@ -138,20 +118,19 @@ public class MP3Header
         // 11000000       =                         11000000
         //                +_________________________________
         //                  00000011000011000011000011000000
-        bithdr = (ulong)(((c[0] & 255) << 24) | ((c[1] & 255) << 16) | ((c[2] & 255) << 8) | ((c[3] & 255)));
+        bithdr = (ulong) (((c[0] & 255) << 24) | ((c[1] & 255) << 16) | ((c[2] & 255) << 8) | ((c[3] & 255)));
     }
 
     private bool LoadVBRHeader(byte[] inputheader)
     {
         // If it's a variable bitrate MP3, the first 4 bytes will read 'Xing'
         // since they're the ones who added variable bitrate-edness to MP3s
-        if (inputheader[0] == 88 && inputheader[1] == 105 &&
-            inputheader[2] == 110 && inputheader[3] == 103)
+        if (inputheader[0] == 88 && inputheader[1] == 105 && inputheader[2] == 110 && inputheader[3] == 103)
         {
-            int flags = (int)(((inputheader[4] & 255) << 24) | ((inputheader[5] & 255) << 16) | ((inputheader[6] & 255) << 8) | ((inputheader[7] & 255)));
+            int flags = (((inputheader[4] & 255) << 24) | ((inputheader[5] & 255) << 16) | ((inputheader[6] & 255) << 8) | ((inputheader[7] & 255)));
             if ((flags & 0x0001) == 1)
             {
-                intVFrames = (int)(((inputheader[8] & 255) << 24) | ((inputheader[9] & 255) << 16) | ((inputheader[10] & 255) << 8) | ((inputheader[11] & 255)));
+                intVFrames = (((inputheader[8] & 255) << 24) | ((inputheader[9] & 255) << 16) | ((inputheader[10] & 255) << 8) | ((inputheader[11] & 255)));
                 return true;
             }
             else
@@ -165,89 +144,84 @@ public class MP3Header
 
     private bool IsValidHeader()
     {
-        return (((getFrameSync() & 2047) == 2047) &&
-                ((getVersionIndex() & 3) != 1) &&
-                ((getLayerIndex() & 3) != 0) &&
-                ((getBitrateIndex() & 15) != 0) &&
-                ((getBitrateIndex() & 15) != 15) &&
-                ((getFrequencyIndex() & 3) != 3) &&
-                ((getEmphasisIndex() & 3) != 2));
+        return (((getFrameSync() & 2047) == 2047) && ((getVersionIndex() & 3) != 1) && ((getLayerIndex() & 3) != 0) && ((getBitrateIndex() & 15) != 0) && ((getBitrateIndex() & 15) != 15) &&
+                ((getFrequencyIndex() & 3) != 3) && ((getEmphasisIndex() & 3) != 2));
     }
 
     private int getFrameSync()
     {
-        return (int)((bithdr >> 21) & 2047);
+        return (int) ((bithdr >> 21) & 2047);
     }
 
     private int getVersionIndex()
     {
-        return (int)((bithdr >> 19) & 3);
+        return (int) ((bithdr >> 19) & 3);
     }
 
     private int getLayerIndex()
     {
-        return (int)((bithdr >> 17) & 3);
+        return (int) ((bithdr >> 17) & 3);
     }
 
     private int getProtectionBit()
     {
-        return (int)((bithdr >> 16) & 1);
+        return (int) ((bithdr >> 16) & 1);
     }
 
     private int getBitrateIndex()
     {
-        return (int)((bithdr >> 12) & 15);
+        return (int) ((bithdr >> 12) & 15);
     }
 
     private int getFrequencyIndex()
     {
-        return (int)((bithdr >> 10) & 3);
+        return (int) ((bithdr >> 10) & 3);
     }
 
     private int getPaddingBit()
     {
-        return (int)((bithdr >> 9) & 1);
+        return (int) ((bithdr >> 9) & 1);
     }
 
     private int getPrivateBit()
     {
-        return (int)((bithdr >> 8) & 1);
+        return (int) ((bithdr >> 8) & 1);
     }
 
     private int getModeIndex()
     {
-        return (int)((bithdr >> 6) & 3);
+        return (int) ((bithdr >> 6) & 3);
     }
 
     private int getModeExtIndex()
     {
-        return (int)((bithdr >> 4) & 3);
+        return (int) ((bithdr >> 4) & 3);
     }
 
     private int getCoprightBit()
     {
-        return (int)((bithdr >> 3) & 1);
+        return (int) ((bithdr >> 3) & 1);
     }
 
     private int getOrginalBit()
     {
-        return (int)((bithdr >> 2) & 1);
+        return (int) ((bithdr >> 2) & 1);
     }
 
     private int getEmphasisIndex()
     {
-        return (int)(bithdr & 3);
+        return (int) (bithdr & 3);
     }
 
     private double getVersion()
     {
-        double[] table = { 2.5, 0.0, 2.0, 1.0 };
+        double[] table = {2.5, 0.0, 2.0, 1.0};
         return table[getVersionIndex()];
     }
 
     private int getLayer()
     {
-        return (int)(4 - getLayerIndex());
+        return (4 - getLayerIndex());
     }
 
     private int getBitrate()
@@ -256,23 +230,24 @@ public class MP3Header
         // otherwise, we use a lookup table to return the bitrate
         if (boolVBitRate)
         {
-            double medFrameSize = (double)lngFileSize / (double)getNumberOfFrames();
-            return (int)((medFrameSize * (double)getFrequency()) / (1000.0 * ((getLayerIndex() == 3) ? 12.0 : 144.0)));
+            double medFrameSize = lngFileSize/(double) getNumberOfFrames();
+            return (int) ((medFrameSize*getFrequency())/(1000.0*((getLayerIndex() == 3) ? 12.0 : 144.0)));
         }
         else
         {
-            int[, ,] table =        {
-                                { // MPEG 2 & 2.5
-                                    {0,  8, 16, 24, 32, 40, 48, 56, 64, 80, 96,112,128,144,160,0}, // Layer III
-                                    {0,  8, 16, 24, 32, 40, 48, 56, 64, 80, 96,112,128,144,160,0}, // Layer II
-                                    {0, 32, 48, 56, 64, 80, 96,112,128,144,160,176,192,224,256,0}  // Layer I
-                                },
-                                { // MPEG 1
-                                    {0, 32, 40, 48, 56, 64, 80, 96,112,128,160,192,224,256,320,0}, // Layer III
-                                    {0, 32, 48, 56, 64, 80, 96,112,128,160,192,224,256,320,384,0}, // Layer II
-                                    {0, 32, 64, 96,128,160,192,224,256,288,320,352,384,416,448,0}  // Layer I
-                                }
-                                };
+            int[,,] table = {
+                                {
+// MPEG 2 & 2.5
+                                    {0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160, 0}, // Layer III
+                                    {0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160, 0}, // Layer II
+                                    {0, 32, 48, 56, 64, 80, 96, 112, 128, 144, 160, 176, 192, 224, 256, 0} // Layer I
+                                }, {
+// MPEG 1
+                                       {0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 0}, // Layer III
+                                       {0, 32, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 384, 0}, // Layer II
+                                       {0, 32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448, 0} // Layer I
+                                   }
+                            };
 
             return table[getVersionIndex() & 1, getLayerIndex() - 1, getBitrateIndex()];
         }
@@ -280,12 +255,12 @@ public class MP3Header
 
     private int getFrequency()
     {
-        int[,] table =    {    
-                            {32000, 16000,  8000}, // MPEG 2.5
-                            {    0,     0,     0}, // reserved
-                            {22050, 24000, 16000}, // MPEG 2
-                            {44100, 48000, 32000}  // MPEG 1
-                        };
+        int[,] table = {
+                           {32000, 16000, 8000}, // MPEG 2.5
+                           {0, 0, 0}, // reserved
+                           {22050, 24000, 16000}, // MPEG 2
+                           {44100, 48000, 32000} // MPEG 1
+                       };
 
         return table[getVersionIndex(), getFrequencyIndex()];
     }
@@ -308,8 +283,8 @@ public class MP3Header
     private int getLengthInSeconds()
     {
         // "intKilBitFileSize" made by dividing by 1000 in order to match the "Kilobits/second"
-        int intKiloBitFileSize = (int)((8 * lngFileSize) / 1000);
-        return (int)(intKiloBitFileSize / getBitrate());
+        var intKiloBitFileSize = (int) ((8*lngFileSize)/1000);
+        return (intKiloBitFileSize/getBitrate());
     }
 
     private string getFormattedLength()
@@ -318,16 +293,16 @@ public class MP3Header
         int s = getLengthInSeconds();
 
         // Seconds to display
-        int ss = s % 60;
+        int ss = s%60;
 
         // Complete number of minutes
-        int m = (s - ss) / 60;
+        int m = (s - ss)/60;
 
         // Minutes to display
-        int mm = m % 60;
+        int mm = m%60;
 
         // Complete number of hours
-        int h = (m - mm) / 60;
+        int h = (m - mm)/60;
 
         // Make "hh:mm:ss"
         return h.ToString("D2") + ":" + mm.ToString("D2") + ":" + ss.ToString("D2");
@@ -338,8 +313,8 @@ public class MP3Header
         // Again, the number of MPEG frames is dependant on whether it's a variable bitrate MP3 or not
         if (!boolVBitRate)
         {
-            double medFrameSize = (double)(((getLayerIndex() == 3) ? 12 : 144) * ((1000.0 * (float)getBitrate()) / (float)getFrequency()));
-            return (int)(lngFileSize / medFrameSize);
+            double medFrameSize = (((getLayerIndex() == 3) ? 12 : 144)*((1000.0*getBitrate())/getFrequency()));
+            return (int) (lngFileSize/medFrameSize);
         }
         else
             return intVFrames;

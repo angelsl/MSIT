@@ -1,19 +1,17 @@
-﻿/*  MapleLib - A general-purpose MapleStory library
- * Copyright (C) 2009, 2010 Snow and haha01haha01
-   
- * This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
- * This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
-
+﻿// This file is part of MSreinator. This file may have been taken from other applications and libraries.
+// 
+// MSreinator is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// MSreinator is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MSreinator.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -30,106 +28,28 @@ namespace MapleLib.WzLib.WzProperties
     public class WzPngProperty : IWzImageProperty
     {
         #region Fields
-        internal int width, height, format, format2;
+
         internal byte[] compressedBytes;
-        internal Bitmap png;
-        internal IWzObject parent;
+        internal int format, format2;
+        internal int height;
         //internal WzImage imgParent;
-        internal bool listWzUsed = false;
+        internal bool listWzUsed;
 
-        internal WzBinaryReader wzReader;
         internal long offs;
+        internal IWzObject parent;
+        internal Bitmap png;
+        internal int width;
+        internal WzBinaryReader wzReader;
+
         #endregion
-
-        #region Inherited Members
-        public override void SetValue(object value)
-        {
-            if (value is Bitmap) SetPNG((Bitmap)value);
-            else compressedBytes = (byte[])value;
-        }
-
-        public override IWzImageProperty DeepClone()
-        {
-            WzPngProperty clone = (WzPngProperty)MemberwiseClone();
-            clone.compressedBytes = GetCompressedBytes(false);
-            return clone;
-        }
-
-        public override object WzValue { get { return GetPNG(false); } }
-        /// <summary>
-        /// The parent of the object
-        /// </summary>
-        public override IWzObject Parent { get { return parent; } internal set { parent = value; } }
-        /*/// <summary>
-        /// The image that this property is contained in
-        /// </summary>
-        public override WzImage ParentImage { get { return imgParent; } internal set { imgParent = value; } }*/
-        /// <summary>
-        /// The name of the property
-        /// </summary>
-        public override string Name { get { return "PNG"; } set { } }
-        /// <summary>
-        /// The WzPropertyType of the property
-        /// </summary>
-        public override WzPropertyType PropertyType { get { return WzPropertyType.PNG; } }
-        public override void WriteValue(WzBinaryWriter writer)
-        {
-            throw new NotImplementedException("Cannot write a PngProperty");
-        }
-        /// <summary>
-        /// Disposes the object
-        /// </summary>
-        public override void Dispose()
-        {
-            compressedBytes = null;
-            if (png != null)
-            {
-                png.Dispose();
-                png = null;
-            }
-        }
-        #endregion
-
-        #region Custom Members
-        /// <summary>
-        /// The width of the bitmap
-        /// </summary>
-        public int Width { get { return width; } set { width = value; } }
-        /// <summary>
-        /// The height of the bitmap
-        /// </summary>
-        public int Height { get { return height; } set { height = value; } }
-        /// <summary>
-        /// The format of the bitmap
-        /// </summary>
-        public int Format { get { return format + format2; } set { format = value; format2 = 0; } }
-
-        public bool ListWzUsed { get { return listWzUsed; } set { if (value != listWzUsed) { listWzUsed = value; CompressPng(GetPNG(false)); } } }
-        /// <summary>
-        /// The actual bitmap
-        /// </summary>
-        public Bitmap PNG
-        {
-            set
-            {
-                png = value;
-                CompressPng(value);
-            }
-        }
-
-        [Obsolete("To enable more control over memory usage, this property was superseded by the GetCompressedBytes method and will be removed in the future")]
-        public byte[] CompressedBytes
-        {
-            get
-            {
-                return GetCompressedBytes(false);
-            }
-        }
 
         /// <summary>
         /// Creates a blank WzPngProperty
         /// </summary>
-        public WzPngProperty() { }
+        public WzPngProperty()
+        {
+        }
+
         internal WzPngProperty(WzBinaryReader reader, bool parseNow)
         {
             // Read compressed bytes
@@ -149,14 +69,14 @@ namespace MapleLib.WzLib.WzProperties
                     compressedBytes = wzReader.ReadBytes(len);
                     ParsePng();
                 }
-                else 
+                else
                     reader.BaseStream.Position += len;
             }
             wzReader = reader;
         }
-        #endregion
 
         #region Parsing Methods
+
         public byte[] GetCompressedBytes(bool saveInMemory)
         {
             if (compressedBytes == null)
@@ -210,11 +130,11 @@ namespace MapleLib.WzLib.WzProperties
 
         internal byte[] Decompress(byte[] compressedBuffer, int decompressedSize)
         {
-            MemoryStream memStream = new MemoryStream();
+            var memStream = new MemoryStream();
             memStream.Write(compressedBuffer, 2, compressedBuffer.Length - 2);
-            byte[] buffer = new byte[decompressedSize];
+            var buffer = new byte[decompressedSize];
             memStream.Position = 0;
-            DeflateStream zip = new DeflateStream(memStream, CompressionMode.Decompress);
+            var zip = new DeflateStream(memStream, CompressionMode.Decompress);
             zip.Read(buffer, 0, buffer.Length);
             zip.Close();
             zip.Dispose();
@@ -222,22 +142,24 @@ namespace MapleLib.WzLib.WzProperties
             memStream.Dispose();
             return buffer;
         }
+
         internal byte[] Compress(byte[] decompressedBuffer)
         {
-            MemoryStream memStream = new MemoryStream();
-            DeflateStream zip = new DeflateStream(memStream, CompressionMode.Compress, true);
+            var memStream = new MemoryStream();
+            var zip = new DeflateStream(memStream, CompressionMode.Compress, true);
             zip.Write(decompressedBuffer, 0, decompressedBuffer.Length);
             zip.Close();
             memStream.Position = 0;
-            byte[] buffer = new byte[memStream.Length + 2];
+            var buffer = new byte[memStream.Length + 2];
             //Console.WriteLine(BitConverter.ToString(memStream.ToArray()));
             memStream.Read(buffer, 2, buffer.Length - 2);
             memStream.Close();
             memStream.Dispose();
             zip.Dispose();
-            System.Buffer.BlockCopy(new byte[] { 0x78, 0x9C }, 0, buffer, 0, 2);
+            Buffer.BlockCopy(new byte[] {0x78, 0x9C}, 0, buffer, 0, 2);
             return buffer;
         }
+
         internal void ParsePng()
         {
             DeflateStream zlib;
@@ -248,7 +170,7 @@ namespace MapleLib.WzLib.WzProperties
             WzImage imgParent = ParentImage;
             byte[] decBuf;
 
-            BinaryReader reader = new BinaryReader(new MemoryStream(compressedBytes));
+            var reader = new BinaryReader(new MemoryStream(compressedBytes));
             ushort header = reader.ReadUInt16();
             listWzUsed = header != 0x9C78 && header != 0xDA78;
             if (!listWzUsed)
@@ -258,7 +180,7 @@ namespace MapleLib.WzLib.WzProperties
             else
             {
                 reader.BaseStream.Position -= 2;
-                MemoryStream dataStream = new MemoryStream();
+                var dataStream = new MemoryStream();
                 int blocksize = 0;
                 int endOfPng = compressedBytes.Length;
 
@@ -268,7 +190,7 @@ namespace MapleLib.WzLib.WzProperties
                     File.WriteAllBytes(@"D:\test2.bin", imgParent.reader.WzKey);
                     for (int i = 0; i < blocksize; i++)
                     {
-                        dataStream.WriteByte((byte)(reader.ReadByte() ^ imgParent.reader.WzKey[i]));
+                        dataStream.WriteByte((byte) (reader.ReadByte() ^ imgParent.reader.WzKey[i]));
                     }
                 }
                 dataStream.Position = 2;
@@ -280,14 +202,18 @@ namespace MapleLib.WzLib.WzProperties
                 case 1:
                     bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
                     bmpData = bmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
-                    uncompressedSize = width * height * 2;
+                    uncompressedSize = width*height*2;
                     decBuf = new byte[uncompressedSize];
                     zlib.Read(decBuf, 0, uncompressedSize);
-                    byte[] argb = new Byte[uncompressedSize * 2];
+                    var argb = new Byte[uncompressedSize*2];
                     for (int i = 0; i < uncompressedSize; i++)
                     {
-                        b = decBuf[i] & 0x0F; b |= (b << 4); argb[i * 2] = (byte)b;
-                        g = decBuf[i] & 0xF0; g |= (g >> 4); argb[i * 2 + 1] = (byte)g;
+                        b = decBuf[i] & 0x0F;
+                        b |= (b << 4);
+                        argb[i*2] = (byte) b;
+                        g = decBuf[i] & 0xF0;
+                        g |= (g >> 4);
+                        argb[i*2 + 1] = (byte) g;
                     }
                     Marshal.Copy(argb, 0, bmpData.Scan0, argb.Length);
                     bmp.UnlockBits(bmpData);
@@ -295,7 +221,7 @@ namespace MapleLib.WzLib.WzProperties
                 case 2:
                     bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
                     bmpData = bmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
-                    uncompressedSize = width * height * 4;
+                    uncompressedSize = width*height*4;
                     decBuf = new byte[uncompressedSize];
                     zlib.Read(decBuf, 0, uncompressedSize);
                     Marshal.Copy(decBuf, 0, bmpData.Scan0, decBuf.Length);
@@ -304,7 +230,7 @@ namespace MapleLib.WzLib.WzProperties
                 case 513:
                     bmp = new Bitmap(width, height, PixelFormat.Format16bppRgb565);
                     bmpData = bmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format16bppRgb565);
-                    uncompressedSize = width * height * 2;
+                    uncompressedSize = width*height*2;
                     decBuf = new byte[uncompressedSize];
                     zlib.Read(decBuf, 0, uncompressedSize);
                     Marshal.Copy(decBuf, 0, bmpData.Scan0, decBuf.Length);
@@ -313,7 +239,7 @@ namespace MapleLib.WzLib.WzProperties
 
                 case 517:
                     bmp = new Bitmap(width, height);
-                    uncompressedSize = width * height / 128;
+                    uncompressedSize = width*height/128;
                     decBuf = new byte[uncompressedSize];
                     zlib.Read(decBuf, 0, uncompressedSize);
                     byte iB = 0;
@@ -321,10 +247,14 @@ namespace MapleLib.WzLib.WzProperties
                     {
                         for (byte j = 0; j < 8; j++)
                         {
-                            iB = Convert.ToByte(((decBuf[i] & (0x01 << (7 - j))) >> (7 - j)) * 0xFF);
+                            iB = Convert.ToByte(((decBuf[i] & (0x01 << (7 - j))) >> (7 - j))*0xFF);
                             for (int k = 0; k < 16; k++)
                             {
-                                if (x == width) { x = 0; y++; }
+                                if (x == width)
+                                {
+                                    x = 0;
+                                    y++;
+                                }
                                 bmp.SetPixel(x, y, Color.FromArgb(0xFF, iB, iB, iB));
                                 x++;
                             }
@@ -334,10 +264,11 @@ namespace MapleLib.WzLib.WzProperties
             }
             png = bmp;
         }
+
         internal void CompressPng(Bitmap bmp)
         {
             //Console.WriteLine("a"); why was that here anyway...
-            byte[] buf = new byte[bmp.Width * bmp.Height * 8];
+            var buf = new byte[bmp.Width*bmp.Height*8];
             format = 2;
             format2 = 0;
             width = bmp.Width;
@@ -357,23 +288,25 @@ namespace MapleLib.WzLib.WzProperties
             compressedBytes = Compress(buf);
             if (listWzUsed)
             {
-                MemoryStream memStream = new MemoryStream();
-                WzBinaryWriter writer = new WzBinaryWriter(memStream, WzTool.GetIvByMapleVersion(WzMapleVersion.GMS));
+                var memStream = new MemoryStream();
+                var writer = new WzBinaryWriter(memStream, WzTool.GetIvByMapleVersion(WzMapleVersion.GMS));
                 writer.Write(2);
                 for (int i = 0; i < 2; i++)
                 {
-                    writer.Write((byte)(compressedBytes[i] ^ writer.WzKey[i]));
+                    writer.Write((byte) (compressedBytes[i] ^ writer.WzKey[i]));
                 }
                 writer.Write(compressedBytes.Length - 2);
                 for (int i = 2; i < compressedBytes.Length; i++)
-                    writer.Write((byte)(compressedBytes[i] ^ writer.WzKey[i - 2]));
+                    writer.Write((byte) (compressedBytes[i] ^ writer.WzKey[i - 2]));
                 compressedBytes = memStream.GetBuffer();
                 writer.Close();
             }
         }
+
         #endregion
 
         #region Cast Values
+
         internal override WzPngProperty ToPngProperty(WzPngProperty def)
         {
             return this;
@@ -388,6 +321,135 @@ namespace MapleLib.WzLib.WzProperties
         {
             return base.ToBytes(def);
         }
+
         #endregion
+
+        public override object WzValue
+        {
+            get { return GetPNG(false); }
+        }
+
+        /// <summary>
+        /// The parent of the object
+        /// </summary>
+        public override IWzObject Parent
+        {
+            get { return parent; }
+            internal set { parent = value; }
+        }
+
+        /*/// <summary>
+        /// The image that this property is contained in
+        /// </summary>
+        public override WzImage ParentImage { get { return imgParent; } internal set { imgParent = value; } }*/
+
+        /// <summary>
+        /// The name of the property
+        /// </summary>
+        public override string Name
+        {
+            get { return "PNG"; }
+            set { }
+        }
+
+        /// <summary>
+        /// The WzPropertyType of the property
+        /// </summary>
+        public override WzPropertyType PropertyType
+        {
+            get { return WzPropertyType.PNG; }
+        }
+
+        /// <summary>
+        /// The width of the bitmap
+        /// </summary>
+        public int Width
+        {
+            get { return width; }
+            set { width = value; }
+        }
+
+        /// <summary>
+        /// The height of the bitmap
+        /// </summary>
+        public int Height
+        {
+            get { return height; }
+            set { height = value; }
+        }
+
+        /// <summary>
+        /// The format of the bitmap
+        /// </summary>
+        public int Format
+        {
+            get { return format + format2; }
+            set
+            {
+                format = value;
+                format2 = 0;
+            }
+        }
+
+        public bool ListWzUsed
+        {
+            get { return listWzUsed; }
+            set
+            {
+                if (value != listWzUsed)
+                {
+                    listWzUsed = value;
+                    CompressPng(GetPNG(false));
+                }
+            }
+        }
+
+        /// <summary>
+        /// The actual bitmap
+        /// </summary>
+        public Bitmap PNG
+        {
+            set
+            {
+                png = value;
+                CompressPng(value);
+            }
+        }
+
+        [Obsolete("To enable more control over memory usage, this property was superseded by the GetCompressedBytes method and will be removed in the future")] public byte[] CompressedBytes
+        {
+            get { return GetCompressedBytes(false); }
+        }
+
+        public override void SetValue(object value)
+        {
+            if (value is Bitmap) SetPNG((Bitmap) value);
+            else compressedBytes = (byte[]) value;
+        }
+
+        public override IWzImageProperty DeepClone()
+        {
+            var clone = (WzPngProperty) MemberwiseClone();
+            clone.compressedBytes = GetCompressedBytes(false);
+            return clone;
+        }
+
+        public override void WriteValue(WzBinaryWriter writer)
+        {
+            throw new NotImplementedException("Cannot write a PngProperty");
+        }
+
+        /// <summary>
+        /// Disposes the object
+        /// </summary>
+        public override void Dispose()
+        {
+            compressedBytes = null;
+            if (png != null)
+            {
+                png.Dispose();
+                png = null;
+            }
+        }
     }
 }

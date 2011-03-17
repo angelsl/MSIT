@@ -1,48 +1,43 @@
-﻿/*  MapleLib - A general-purpose MapleStory library
- * Copyright (C) 2009, 2010 Snow and haha01haha01
-   
- * This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
- * This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
-
+﻿// This file is part of MSreinator. This file may have been taken from other applications and libraries.
+// 
+// MSreinator is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// MSreinator is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MSreinator.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Drawing;
 using MapleLib.WzLib.WzProperties;
 
 namespace MapleLib.WzLib
 {
-	/// <summary>
-	/// An interface for wz objects
-	/// </summary>
-	public abstract class IWzObject : IDisposable
-	{
-        private object tag = null;
-        private object tag2 = null;
-        private object tag3 = null;
+    /// <summary>
+    /// An interface for wz objects
+    /// </summary>
+    public abstract class IWzObject : IDisposable
+    {
+        /// <summary>
+        /// The name of the object
+        /// </summary>
+        public abstract string Name { get; set; }
 
-		public abstract void Dispose();
+        /// <summary>
+        /// The WzObjectType of the object
+        /// </summary>
+        public abstract WzObjectType ObjectType { get; }
 
-		/// <summary>
-		/// The name of the object
-		/// </summary>
-		public abstract string Name { get; set; }
-		/// <summary>
-		/// The WzObjectType of the object
-		/// </summary>
-		public abstract WzObjectType ObjectType { get; }
-		/// <summary>
-		/// Returns the parent object
-		/// </summary>
-		public abstract IWzObject Parent { get; internal set; }
+        /// <summary>
+        /// Returns the parent object
+        /// </summary>
+        public abstract IWzObject Parent { get; internal set; }
+
         /// <summary>
         /// Returns the parent WZ File
         /// </summary>
@@ -52,8 +47,8 @@ namespace MapleLib.WzLib
         {
             get
             {
-                if (this is WzFile) return ((WzFile)this).WzDirectory.Name;
-                string result = this.Name;
+                if (this is WzFile) return ((WzFile) this).WzDirectory.Name;
+                string result = Name;
                 IWzObject currObj = this;
                 while (currObj.Parent != null)
                 {
@@ -67,36 +62,33 @@ namespace MapleLib.WzLib
         /// <summary>
         /// Used in HaCreator to save already parsed images
         /// </summary>
-        public virtual object HCTag
-        {
-            get { return tag; }
-            set { tag = value; }
-        }
+        public virtual object HCTag { get; set; }
 
         /// <summary>
         /// Used in HaCreator's MapSimulator to save already parsed textures
         /// </summary>
-        public virtual object MSTag
-        {
-            get { return tag2; }
-            set { tag2 = value; }
-        }
+        public virtual object MSTag { get; set; }
 
         /// <summary>
         /// Used in HaRepacker to save WzNodes
         /// </summary>
-        public virtual object HRTag
+        public virtual object HRTag { get; set; }
+
+        public virtual object WzValue
         {
-            get { return tag3; }
-            set { tag3 = value; }
+            get { return null; }
         }
 
-        public virtual object WzValue { get { return null; } }
+        #region IDisposable Members
+
+        public abstract void Dispose();
+
+        #endregion
 
         public abstract void Remove();
 
-        //Credits to BluePoop for the idea of using cast overriding
         #region Cast Values
+
         public static explicit operator float(IWzObject obj)
         {
             return obj.ToFloat(0);
@@ -112,7 +104,7 @@ namespace MapleLib.WzLib
             return obj.ToDouble(0);
         }
 
-        public static explicit operator System.Drawing.Bitmap(IWzObject obj)
+        public static explicit operator Bitmap(IWzObject obj)
         {
             return obj.ToBitmap(null);
         }
@@ -132,7 +124,7 @@ namespace MapleLib.WzLib
             return obj.ToUnsignedShort(0);
         }
 
-        public static explicit operator System.Drawing.Point(IWzObject obj)
+        public static explicit operator Point(IWzObject obj)
         {
             return obj.ToPoint(Point.Empty);
         }
@@ -147,7 +139,8 @@ namespace MapleLib.WzLib
             /*if (this is WzPngProperty) return (WzPngProperty)this;
             else if (this is WzCanvasProperty) return (WzPngProperty)WzValue;
             else if (this is WzUOLProperty) return ToUOLLink(this).ToPngProperty(def);
-            else */return def;
+            else */
+            return def;
         }
 
         internal virtual int ToInt(int def)
@@ -195,5 +188,6 @@ namespace MapleLib.WzLib
 
         #endregion
 
-	}
+        //Credits to BluePoop for the idea of using cast overriding
+    }
 }

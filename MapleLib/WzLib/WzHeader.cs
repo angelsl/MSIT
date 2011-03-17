@@ -1,32 +1,25 @@
-﻿/*  MapleLib - A general-purpose MapleStory library
- * Copyright (C) 2009, 2010 Snow and haha01haha01
-   
- * This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
- * This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿// This file is part of MSreinator. This file may have been taken from other applications and libraries.
+// 
+// MSreinator is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// MSreinator is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MSreinator.  If not, see <http://www.gnu.org/licenses/>.
 namespace MapleLib.WzLib
 {
-	public class WzHeader
-	{
-        private string ident;
+    public class WzHeader
+    {
         private string copyright;
         private ulong fsize;
         private uint fstart;
+        private string ident;
 
         public string Ident
         {
@@ -46,7 +39,7 @@ namespace MapleLib.WzLib
             set { fsize = value; }
         }
 
-		public uint FStart 
+        public uint FStart
         {
             get { return fstart; }
             set { fstart = value; }
@@ -54,17 +47,17 @@ namespace MapleLib.WzLib
 
         public void RecalculateFileStart()
         {
-            fstart = (uint)(ident.Length + sizeof(ulong) + sizeof(uint) + copyright.Length + 1);
+            fstart = (uint) (ident.Length + sizeof (ulong) + sizeof (uint) + copyright.Length + 1);
         }
 
-		public static WzHeader GetDefault()
-		{
-			WzHeader header = new WzHeader();
-			header.ident = "PKG1";
-			header.copyright = "Package file v1.0 Copyright 2002 Wizet, ZMS";
-			header.fstart = 60;
-			header.fsize = 0;
-			return header;
-		}
-	}
+        public static WzHeader GetDefault()
+        {
+            var header = new WzHeader();
+            header.ident = "PKG1";
+            header.copyright = "Package file v1.0 Copyright 2002 Wizet, ZMS";
+            header.fstart = 60;
+            header.fsize = 0;
+            return header;
+        }
+    }
 }
