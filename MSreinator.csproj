@@ -34,15 +34,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommonForms">
-      <HintPath>D:\Misc\Development\C#\Projects\MiscTools\MSreinator\Lib\CommonForms.dll</HintPath>
+      <HintPath>Lib\CommonForms.dll</HintPath>
     </Reference>
     <Reference Include="GifComponents, Version=0.1.3747.30698, Culture=neutral, PublicKeyToken=3af2759e475084d9, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\Misc\Development\C#\Projects\MiscTools\MSreinator\Lib\GifComponents.dll</HintPath>
+      <HintPath>Lib\GifComponents.dll</HintPath>
     </Reference>
     <Reference Include="SharpApng, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\Misc\Development\C#\Projects\MiscTools\MSreinator\Lib\SharpApng.dll</HintPath>
+      <HintPath>Lib\SharpApng.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
