@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E815A51C-ECDA-49B9-A6FB-39DB9531B90A}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MSreinator</RootNamespace>
+    <AssemblyName>MSreinator</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CommonForms">
+      <HintPath>D:\Misc\Development\C#\Projects\MiscTools\MSreinator\Lib\CommonForms.dll</HintPath>
+    </Reference>
+    <Reference Include="GifComponents, Version=0.1.3747.30698, Culture=neutral, PublicKeyToken=3af2759e475084d9, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>D:\Misc\Development\C#\Projects\MiscTools\MSreinator\Lib\GifComponents.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpApng, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>D:\Misc\Development\C#\Projects\MiscTools\MSreinator\Lib\SharpApng.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Frame.cs" />
+    <Compile Include="InputMethods.cs" />
+    <Compile Include="MapleAnimator.cs" />
+    <Compile Include="MapleLib\Helpers\ErrorLogger.cs" />
+    <Compile Include="MapleLib\MapleCryptoLib\AESEncryption.cs" />
+    <Compile Include="MapleLib\MapleCryptoLib\CryptoConstants.cs" />
+    <Compile Include="MapleLib\MapleCryptoLib\MapleCrypto.cs" />
+    <Compile Include="MapleLib\MapleCryptoLib\MapleCustomEncryption.cs" />
+    <Compile Include="MapleLib\WzLib\IExtended.cs" />
+    <Compile Include="MapleLib\WzLib\IPropertyContainer.cs" />
+    <Compile Include="MapleLib\WzLib\IWzFile.cs" />
+    <Compile Include="MapleLib\WzLib\IWzImageProperty.cs" />
+    <Compile Include="MapleLib\WzLib\IWzObject.cs" />
+    <Compile Include="MapleLib\WzLib\Util\MP3Header.cs" />
+    <Compile Include="MapleLib\WzLib\Util\WzBinaryReader.cs" />
+    <Compile Include="MapleLib\WzLib\Util\WzBinaryWriter.cs" />
+    <Compile Include="MapleLib\WzLib\Util\WzKeyGenerator.cs" />
+    <Compile Include="MapleLib\WzLib\Util\WzTool.cs" />
+    <Compile Include="MapleLib\WzLib\Util\XmlUtil.cs" />
+    <Compile Include="MapleLib\WzLib\WzDirectory.cs" />
+    <Compile Include="MapleLib\WzLib\WzFile.cs" />
+    <Compile Include="MapleLib\WzLib\WzHeader.cs" />
+    <Compile Include="MapleLib\WzLib\WzImage.cs" />
+    <Compile Include="MapleLib\WzLib\WzMapleVersion.cs" />
+    <Compile Include="MapleLib\WzLib\WzObjectType.cs" />
+    <Compile Include="MapleLib\WzLib\WzProperties\WzByteFloatProperty.cs" />
+    <Compile Include="MapleLib\WzLib\WzProperties\WzCanvasProperty.cs" />
+    <Compile Include="MapleLib\WzLib\WzProperties\WzCompressedIntProperty.cs" />
+    <Compile Include="MapleLib\WzLib\WzProperties\WzConvexProperty.cs" />
+    <Compile Include="MapleLib\WzLib\WzProperties\WzDoubleProperty.cs" />
+    <Compile Include="MapleLib\WzLib\WzProperties\WzNullProperty.cs" />
+    <Compile Include="MapleLib\WzLib\WzProperties\WzPngProperty.cs" />
+    <Compile Include="MapleLib\WzLib\WzProperties\WzSoundProperty.cs" />
+    <Compile Include="MapleLib\WzLib\WzProperties\WzStringProperty.cs" />
+    <Compile Include="MapleLib\WzLib\WzProperties\WzSubProperty.cs" />
+    <Compile Include="MapleLib\WzLib\WzProperties\WzUnsignedShortProperty.cs" />
+    <Compile Include="MapleLib\WzLib\WzProperties\WzUOLProperty.cs" />
+    <Compile Include="MapleLib\WzLib\WzProperties\WzVectorProperty.cs" />
+    <Compile Include="MapleLib\WzLib\WzPropertyType.cs" />
+    <Compile Include="MapleLib\WzLib\WzSerializer.cs" />
+    <Compile Include="MapleLib\WzLib\WzSettings.cs" />
+    <Compile Include="MapleLib\WzLib\WzStructure\Data\Data.cs" />
+    <Compile Include="MapleLib\WzLib\WzStructure\Data\Enums.cs" />
+    <Compile Include="MapleLib\WzLib\WzStructure\Foothold.cs" />
+    <Compile Include="MapleLib\WzLib\WzStructure\InfoTool.cs" />
+    <Compile Include="MapleLib\WzLib\WzStructure\MapInfo.cs" />
+    <Compile Include="MapleLib\WzLib\WzStructure\MapleBool.cs" />
+    <Compile Include="Options.cs" />
+    <Compile Include="OutputMethods.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="apng.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libpng15.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
