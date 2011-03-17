@@ -18,7 +18,6 @@ namespace MSreinator
                 age.AddFrame(new GifFrame(f.Image) {Delay = f.Delay/10});
             }
             age.WriteToFile(fn);
-            age.Dispose();
         }
 
         public static void OutputAPNG(IEnumerable<Frame> frames, String fn)
