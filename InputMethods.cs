@@ -1,36 +1,32 @@
-﻿// This file is part of MSreinator. This file may have been taken from other applications and libraries.
+﻿// This file is part of MSIT. This file may have been taken from other applications and libraries.
 // 
-// MSreinator is free software: you can redistribute it and/or modify
+// MSIT is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 // 
-// MSreinator is distributed in the hope that it will be useful,
+// MSIT is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with MSreinator.  If not, see <http://www.gnu.org/licenses/>.
+// along with MSIT.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using MapleLib.WzLib;
 using MapleLib.WzLib.WzProperties;
 
-namespace MSreinator
+namespace MSIT
 {
     internal class InputMethods
     {
-        public static IEnumerable<Frame> InputArgs(IEnumerable<String> args)
-        {
-            throw new NotImplementedException();
-        }
 
-        public static IEnumerable<Frame> InputWz(string wzpath, string inpath, WzMapleVersion wzVer)
+
+        public static IEnumerable<Frame> InputWz(WzFile wz, string inpath)
         {
-            var wz = new WzFile(wzpath, wzVer);
-            wz.ParseWzFile();
-            var iwah = wz.GetObjectFromPath(wz.WzDirectory.Name + "/" + inpath) as WzSubProperty;
+            
+            var iwah = wz.GetWzObjectFromPath(inpath) as WzSubProperty;
             if (iwah == null) throw new ArgumentException("The path provided did not lead to an animation; check input-wzfile, input-wzpath and input-wzver");
             var r = new List<Frame>();
             foreach (IWzImageProperty iwzo in iwah.WzProperties)
@@ -51,6 +47,14 @@ namespace MSreinator
                 }
             }
             return r;
+        }
+    }
+
+    internal static class WzUtilities
+    {
+        public static IWzObject GetWzObjectFromPath(this WzFile wz, string path)
+        {
+            return wz.GetObjectFromPath(wz.WzDirectory.Name + "/" + path);
         }
     }
 }

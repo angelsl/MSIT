@@ -8,8 +8,8 @@
     <ProjectGuid>{E815A51C-ECDA-49B9-A6FB-39DB9531B90A}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MSreinator</RootNamespace>
-    <AssemblyName>MSreinator</AssemblyName>
+    <RootNamespace>MSIT</RootNamespace>
+    <AssemblyName>MSIT</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -33,16 +33,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CommonForms">
-      <HintPath>Lib\CommonForms.dll</HintPath>
+    <Reference Include="CommonForms, Version=0.1.3747.29792, Culture=neutral, PublicKeyToken=3af2759e475084d9, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\CommonForms.dll</HintPath>
     </Reference>
     <Reference Include="GifComponents, Version=0.1.3747.30698, Culture=neutral, PublicKeyToken=3af2759e475084d9, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Lib\GifComponents.dll</HintPath>
+      <HintPath>.\GifComponents.dll</HintPath>
     </Reference>
     <Reference Include="SharpApng, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Lib\SharpApng.dll</HintPath>
+      <HintPath>.\SharpApng.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
@@ -102,10 +103,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Lib\apng.dll">
+    <Content Include="apng.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Lib\libpng15.dll">
+    <Content Include="libpng15.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
