@@ -1,6 +1,6 @@
 # MSIT: MapleStory Image Tool
 
-A command-line utility that grabs images and animations from WZs.
+A command-line utility that grabs images and animations from WZs. Requires .NET 3.5
 
 ## License
 
