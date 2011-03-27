@@ -1,6 +1,6 @@
-# MSreinator
+# MSIT: MapleStory Image Tool
 
-A command-line utility that converts frame-by-frame & offset animations in MapleStory's WZs into GIFs or APNGs.
+A command-line utility that grabs images and animations from WZs.
 
 ## License
 
@@ -9,13 +9,17 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/gpl.htm
 ## Usage
 
 ### Example
-`MSreinator /i:wz /iwzf:D:\MapleStory\Effect.wz /iwzp:BasicEff.img/LevelUp /iwzv:BMS /o:apng /op:LevelUp.png`
 
-For more information, see `MSreinator /?`.
+Animation: `MSIT /iwzf:D:\MapleStory\Effect.wz /iwzp:BasicEff.img/LevelUp /iwzv:BMS /o:png /op:LevelUp.png`  
+Single image: `MSIT /iwzf:D:\MapleStory\Effect.wz /iwzp:BasicEff.img/LevelUp/0 /iwzv:BMS /o:png /op:LevelUp.png`
 
-## Todo
+For more information, see `MSIT /?`.
 
-* Getting data from arguments
+### WZ Versions
+
+* GMS v56+ & GMST
+* EMS & KMS & KMST & MSEA v91-
+* BMS & GMS v55- & MSEA v92+
 
 ## Libraries & Credits
 

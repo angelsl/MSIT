@@ -103,7 +103,6 @@ namespace MSIT
                 Console.WriteLine("An error occured while animating. Check your arguments.");
                 Console.WriteLine(e.ToString());
             }
-
             #endregion
 
         }
