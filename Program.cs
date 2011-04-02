@@ -109,7 +109,7 @@ namespace MSIT
 
         private static void PrintHelp(OptionSet set)
         {
-            Console.WriteLine("Usage: MSreinator <options>");
+            Console.WriteLine("Usage: MSIT <options>");
             Console.WriteLine();
             set.WriteOptionDescriptions(Console.Out);
         }
