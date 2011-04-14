@@ -31,7 +31,7 @@ namespace MSIT
             var r = new List<Frame>();
             foreach (IWzImageProperty iwzo in iwah.WzProperties)
             {
-                var iwc = iwzo as WzCanvasProperty;
+                var iwc = (iwzo is WzUOLProperty ? ((WzUOLProperty) iwzo).Resolve() : iwzo) as WzCanvasProperty;
                 if (iwc == null) continue;
                 try
                 {
@@ -55,6 +55,14 @@ namespace MSIT
         public static IWzObject GetWzObjectFromPath(this WzFile wz, string path)
         {
             return wz.GetObjectFromPath(wz.WzDirectory.Name + "/" + path);
+        }
+
+        public static IWzObject Resolve(this WzUOLProperty uol)
+        {
+            IWzObject ret = uol.LinkValue;
+            while (ret is WzUOLProperty)
+                ret = ((WzUOLProperty) ret).LinkValue;
+            return ret;
         }
     }
 }
