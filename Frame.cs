@@ -16,7 +16,7 @@ using System.Drawing;
 
 namespace MSIT
 {
-    internal struct Frame
+    internal class Frame
     {
         public int Delay;
         public Bitmap Image;

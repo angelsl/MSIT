@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Drawing.Imaging;
 using MapleLib.WzLib;
 using MapleLib.WzLib.WzProperties;
@@ -29,7 +30,6 @@ namespace MSIT
             #region getopt
 
             bool printHelp = false;
-            string aWzFilePath = null;
             string aWzInPath = null;
             bool aPngOutput = false;
             var aWzVer = (WzMapleVersion) int.MinValue;
@@ -38,8 +38,7 @@ namespace MSIT
             int aPadding = 10;
             // input, input-wzfile, input-wzpath, input-wzver, output, output-path, background-color, padding
             var set = new OptionSet();
-            set.Add("iwzf=|input-wzfile=", "The path of the WZ file to get image(s) from. Required", s => aWzFilePath = s);
-            set.Add("iwzp=|input-wzpath=", "The path of the animation or image in the WZ file. Required", s => aWzInPath = s);
+            set.Add("iwzp=|input-wzpath=", "The path of the animation or image. Required", s => aWzInPath = s);
             set.Add("iwzv=|input-wzver=", "The WZ key to use when decoding the WZ. Required", s => aWzVer = (WzMapleVersion) Enum.Parse(typeof (WzMapleVersion), s));
             set.Add("o=|output=",
                     "The method of output: (a)png or gif",
@@ -66,7 +65,7 @@ namespace MSIT
 
             #region check params
 
-            printHelp |= aWzFilePath == null || aWzInPath == null || aWzVer == (WzMapleVersion) int.MinValue || aOutputPath == null;
+            printHelp |= aWzInPath == null || aWzVer == (WzMapleVersion) int.MinValue || aOutputPath == null;
             if (printHelp)
             {
                 PrintHelp(set);
@@ -74,9 +73,9 @@ namespace MSIT
             }
 
             #endregion
-
+            /*
             #region wz parsing
-            var wz = new WzFile(aWzFilePath, aWzVer);
+            var wz = new WzFile(aWzInPath, aWzVer);
             wz.ParseWzFile();
             #endregion
 
@@ -95,7 +94,7 @@ namespace MSIT
             try
             {
                 IEnumerable<Frame> data = InputMethods.InputWz(wz, aWzInPath);
-                data = OffsetAnimator.Process(data, new Rectangle(aPadding, aPadding, aPadding, aPadding), aBgColor);
+                data = OffsetAnimator.Process(new Rectangle(aPadding, aPadding, aPadding, aPadding), aBgColor, data);
                 if (aPngOutput) OutputMethods.OutputPNG(data, aOutputPath);
                 else OutputMethods.OutputGIF(data, aOutputPath);
             } catch(Exception e)
@@ -103,7 +102,7 @@ namespace MSIT
                 Console.WriteLine("An error occured while animating. Check your arguments.");
                 Console.WriteLine(e.ToString());
             }
-            #endregion
+            #endregion*/ //TODO: A LOT OF SHIT
 
         }
 
