@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with MSIT.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using MapleLib.WzLib;
 using MapleLib.WzLib.WzProperties;
@@ -35,7 +36,7 @@ namespace MSIT
                 if (iwc == null) continue;
                 try
                 {
-                    int n = int.Parse(iwc.Name);
+                    int n = int.Parse(iwzo.Name);
                     r.Add(new Frame(n,
                                     iwc.PngProperty.GetPNG(false),
                                     ((WzVectorProperty) iwc.GetProperty("origin")).Pos,
@@ -46,8 +47,7 @@ namespace MSIT
                     continue;
                 }
             }
-            r.Sort((f, y) => f.Number.CompareTo(y.Number));
-            return r;
+            return r.OrderBy(f => f.Number).ToList();
         }
     }
 

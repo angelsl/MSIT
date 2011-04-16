@@ -29,12 +29,8 @@ namespace MSIT
             var framess = zframess.Select(aframess => aframess.Select(f => new Frame(f.Number, f.Image, new Point(-f.Offset.X, -f.Offset.Y), f.Delay)).ToList()).ToList();
             framess = PadOffsets(NormaliseOffsets(framess), padding);
             Size fs = GetFrameSize(framess, padding);
-            foreach(var f in framess)
-            {
-                f.Sort((r, y) => r.Number.CompareTo(y.Number));
-            }
-            var frames = MergeMultiple(framess, fs, background);
-            frames.Sort((r, y) => r.Number.CompareTo(y.Number));
+            framess = framess.Select(f => f.OrderBy(z => z.Number).ToList()).ToList();
+            var frames = MergeMultiple(framess, fs, background).OrderBy(z => z.Number).ToList();
             return FinalProcess(frames, fs, background);
         }
 
