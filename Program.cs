@@ -73,6 +73,44 @@ namespace MSIT
             }
 
             #endregion
+
+            string[] wzpaths = aWzInPath.Split('*');
+            var framess = new List<List<Frame>>();
+            foreach(var wzpath in wzpaths)
+            {
+                string[] split = wzpath.Split('?');
+                string path = split[0];
+                string inPath = split[1];
+                #region wz parsing
+                var wz = new WzFile(path, aWzVer);
+                wz.ParseWzFile();
+                #endregion
+
+                #region getting single image
+
+                var wzcp = wz.GetWzObjectFromPath(inPath) as WzCanvasProperty;
+                if (wzcp != null)
+                {
+                    var b = wzcp.PngProperty.GetPNG(false);
+                    b.Save(aOutputPath, aPngOutput ? ImageFormat.Png : ImageFormat.Gif);
+                    return;
+                }
+                #endregion
+                try
+                {
+                    List<Frame> data = InputMethods.InputWz(wz, inPath);
+                    framess.Add(data);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("An error occured while retrieving frames. Check your arguments.");
+                    Console.WriteLine(e.ToString());
+                }
+                wz.Dispose();
+            }
+            var final = OffsetAnimator.Process(new Rectangle(aPadding, aPadding, aPadding, aPadding), aBgColor, framess.ToArray());
+            if (aPngOutput) OutputMethods.OutputPNG(final, aOutputPath);
+            else OutputMethods.OutputGIF(final, aOutputPath);
             /*
             #region wz parsing
             var wz = new WzFile(aWzInPath, aWzVer);
@@ -102,7 +140,8 @@ namespace MSIT
                 Console.WriteLine("An error occured while animating. Check your arguments.");
                 Console.WriteLine(e.ToString());
             }
-            #endregion*/ //TODO: A LOT OF SHIT
+            #endregion*/
+            //TODO: A LOT OF SHIT
 
         }
 

@@ -12,7 +12,9 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with MSIT.  If not, see <http://www.gnu.org/licenses/>.
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -22,49 +24,52 @@ namespace MSIT
     internal class OffsetAnimator
     {
         // Algorithm stolen from haha01haha01 http://code.google.com/p/hasuite/source/browse/trunk/HaRepackerLib/AnimationBuilder.cs
-        public static IEnumerable<Frame> Process(Rectangle padding, Color background, params IEnumerable<Frame>[] zframess)
+        public static IEnumerable<Frame> Process(Rectangle padding, Color background, params List<Frame>[] zframess)
         {
-            var framess = zframess.Select(aframess => aframess.Select(f => new Frame(f.Number, f.Image, new Point(-f.Offset.X, -f.Offset.Y), f.Delay)));
+            var framess = zframess.Select(aframess => aframess.Select(f => new Frame(f.Number, f.Image, new Point(-f.Offset.X, -f.Offset.Y), f.Delay)).ToList()).ToList();
             framess = PadOffsets(NormaliseOffsets(framess), padding);
             Size fs = GetFrameSize(framess, padding);
             var frames = MergeMultiple(framess, fs, background);
             return FinalProcess(frames, fs, background);
         }
 
-        private static IEnumerable<IEnumerable<Frame>> NormaliseOffsets(IEnumerable<IEnumerable<Frame>> framess)
+        private static List<List<Frame>> NormaliseOffsets(List<List<Frame>> framess)
         {
             int minx = framess.SelectMany(x => x).Min(fy => fy.Offset.X);
             int miny = framess.SelectMany(x => x).Min(fy => fy.Offset.Y);
 
-            return framess.Select(fx => fx.Select(fy => new Frame(fy.Number, fy.Image, new Point(fy.Offset.X - minx, fy.Offset.Y - miny), fy.Delay)));
+            return framess.Select(fx => fx.Select(fy => new Frame(fy.Number, fy.Image, new Point(fy.Offset.X - minx, fy.Offset.Y - miny), fy.Delay)).ToList()).ToList();
         }
 
-        private static IEnumerable<IEnumerable<Frame>> PadOffsets(IEnumerable<IEnumerable<Frame>> framess, Rectangle p)
+        private static List<List<Frame>> PadOffsets(List<List<Frame>> framess, Rectangle p)
         {
-            return framess.Select(fx => fx.Select(fy => new Frame(fy.Number, fy.Image, new Point(fy.Offset.X + p.X, fy.Offset.Y + p.Y), fy.Delay)));
+            return framess.Select(fx => fx.Select(fy => new Frame(fy.Number, fy.Image, new Point(fy.Offset.X + p.X, fy.Offset.Y + p.Y), fy.Delay)).ToList()).ToList();
         }
 
-        private static Size GetFrameSize(IEnumerable<IEnumerable<Frame>> framess, Rectangle padding)
+        private static Size GetFrameSize(List<List<Frame>> framess, Rectangle padding)
         {
-            int w = framess.SelectMany(x => x).Min(x => padding.X + x.Offset.X + x.Image.Width + padding.Width);
-            int h = framess.SelectMany(x => x).Min(x => padding.Y + x.Offset.Y + x.Image.Height + padding.Height);
+            int w = framess.SelectMany(x => x).Max(x => padding.X + x.Offset.X + x.Image.Width + padding.Width);
+            int h = framess.SelectMany(x => x).Max(x => padding.Y + x.Offset.Y + x.Image.Height + padding.Height);
             return new Size(w, h);
             
         }
 
-        private static IEnumerable<Frame> MergeMultiple(IEnumerable<IEnumerable<Frame>> framess, Size fs, Color bg)
+        private static List<Frame> MergeMultiple(List<List<Frame>> framess, Size fs, Color bg)
         {
             if (framess.Count() == 1) return framess.First();
             List<Frame> merged = new List<Frame>();
-            List<IEnumerator<Frame>> ers = framess.Select(x => x.GetEnumerator()).ToList();
-            foreach(var e in ers)
-            {
-                e.Reset();
-                e.MoveNext();
-            }
+            List<List<Frame>.Enumerator> ers = framess.Select(x => x.GetEnumerator()).ToList();
+            
             int no = 0;
             while(ers.Count > 0)
             {
+                ers = ers.Select(x =>
+                {
+                    x.MoveNext();
+                    return x;
+                }
+
+    ).ToList();
                 int mindelay = ers.Min(x => x.Current.Delay);
                 foreach(var e in ers)
                 {
@@ -85,7 +90,7 @@ namespace MSIT
             return merged;
         }
 
-        private static IEnumerable<Frame> FinalProcess(IEnumerable<Frame> frame, Size fs, Color bg)
+        private static IEnumerable<Frame> FinalProcess(List<Frame> frame, Size fs, Color bg)
         {
             return frame.Select(n =>
                                     {

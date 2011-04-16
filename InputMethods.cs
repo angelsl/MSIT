@@ -23,7 +23,7 @@ namespace MSIT
     {
 
 
-        public static IEnumerable<Frame> InputWz(WzFile wz, string inpath)
+        public static List<Frame> InputWz(WzFile wz, string inpath)
         {
             
             var iwah = wz.GetWzObjectFromPath(inpath) as WzSubProperty;
