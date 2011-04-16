@@ -46,6 +46,7 @@ namespace MSIT
                     continue;
                 }
             }
+            r.Sort((f, y) => f.Number.CompareTo(y.Number));
             return r;
         }
     }
