@@ -58,18 +58,17 @@ namespace MSIT
         {
             if (framess.Count() == 1) return framess.First();
             List<Frame> merged = new List<Frame>();
-            List<List<Frame>.Enumerator> ers = framess.Select(x => x.GetEnumerator()).ToList();
-            
-            int no = 0;
-            while(ers.Count > 0)
-            {
-                ers = ers.Select(x =>
+            List<List<Frame>.Enumerator> ers = framess.Select(x => x.GetEnumerator()).Select(x =>
                 {
                     x.MoveNext();
                     return x;
                 }
 
     ).ToList();
+            int no = 0;
+            while(ers.Count > 0)
+            {
+                
                 int mindelay = ers.Min(x => x.Current.Delay);
                 foreach(var e in ers)
                 {
@@ -84,8 +83,9 @@ namespace MSIT
                 }
                 g.Flush(FlushIntention.Sync);
                 merged.Add(new Frame(no++, b, new Point(0,0), mindelay));
-                var todel = ers.Where(e => e.Current.Delay <= 0).Where(e => !e.MoveNext());
-                ers.RemoveAll(c => todel.Contains(c));
+                ers = ers.Where(e => e.Current.Delay > 0 || e.MoveNext()).Select(e => { if(e.Current.Delay <= 0) e.MoveNext();
+                                                                                                   return e;
+                }).ToList();
             }
             return merged;
         }
