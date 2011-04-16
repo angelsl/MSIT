@@ -111,38 +111,6 @@ namespace MSIT
             var final = OffsetAnimator.Process(new Rectangle(aPadding, aPadding, aPadding, aPadding), aBgColor, framess.ToArray());
             if (aPngOutput) OutputMethods.OutputPNG(final, aOutputPath);
             else OutputMethods.OutputGIF(final, aOutputPath);
-            /*
-            #region wz parsing
-            var wz = new WzFile(aWzInPath, aWzVer);
-            wz.ParseWzFile();
-            #endregion
-
-            #region getting single image
-
-            WzCanvasProperty wzcp = wz.GetWzObjectFromPath(aWzInPath) as WzCanvasProperty;
-            if(wzcp != null)
-            {
-                // it's a single image.
-                var b = wzcp.PngProperty.GetPNG(false);
-                b.Save(aOutputPath, aPngOutput ? ImageFormat.Png : ImageFormat.Gif);
-                return;
-            }
-            #endregion
-            #region animations
-            try
-            {
-                IEnumerable<Frame> data = InputMethods.InputWz(wz, aWzInPath);
-                data = OffsetAnimator.Process(new Rectangle(aPadding, aPadding, aPadding, aPadding), aBgColor, data);
-                if (aPngOutput) OutputMethods.OutputPNG(data, aOutputPath);
-                else OutputMethods.OutputGIF(data, aOutputPath);
-            } catch(Exception e)
-            {
-                Console.WriteLine("An error occured while animating. Check your arguments.");
-                Console.WriteLine(e.ToString());
-            }
-            #endregion*/
-            //TODO: A LOT OF SHIT
-
         }
 
         private static void PrintHelp(OptionSet set)
