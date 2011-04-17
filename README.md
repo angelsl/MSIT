@@ -36,6 +36,7 @@ Algorithm taken from [HaRepacker](http://community.kryptodev.com/thread-release-
 
 * Fiel_... of course!_
 * haha01haha01
+* retep998 from [NoLifeStory](http://code.google.com/p/nolifestory/)
 
 This project is a rewrite of MapleAnimator, by angelsl as well, which was never publically released.
 
