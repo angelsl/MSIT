@@ -99,7 +99,7 @@ namespace MSIT
                 try
                 {
                     List<Frame> data = InputMethods.InputWz(wz, inPath);
-                    framess.Add(data);
+                    if(data.Count > 0) framess.Add(data);
                 }
                 catch (Exception e)
                 {
