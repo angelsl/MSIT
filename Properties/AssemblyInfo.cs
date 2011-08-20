@@ -19,12 +19,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("MSreinator")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("MSIT")]
+[assembly: AssemblyDescription("MapleStory Image Tool")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("MSreinator")]
-[assembly: AssemblyCopyright("Copyright ©  2011")]
+[assembly: AssemblyCompany("angelsl")]
+[assembly: AssemblyProduct("MSIT")]
+[assembly: AssemblyCopyright("Copyright © angelsl 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -49,5 +49,5 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.23")]
+[assembly: AssemblyFileVersion("1.23")]

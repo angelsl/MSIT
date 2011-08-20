@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>MSIT.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommonForms, Version=0.1.3747.29792, Culture=neutral, PublicKeyToken=3af2759e475084d9, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>

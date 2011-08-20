@@ -187,7 +187,6 @@ namespace MapleLib.WzLib.WzProperties
                 while (reader.BaseStream.Position < endOfPng)
                 {
                     blocksize = reader.ReadInt32();
-                    File.WriteAllBytes(@"D:\test2.bin", imgParent.reader.WzKey);
                     for (int i = 0; i < blocksize; i++)
                     {
                         dataStream.WriteByte((byte) (reader.ReadByte() ^ imgParent.reader.WzKey[i]));
