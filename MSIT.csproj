@@ -10,8 +10,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MSIT</RootNamespace>
     <AssemblyName>MSIT</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -36,14 +37,6 @@
     <StartupObject>MSIT.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CommonForms, Version=0.1.3747.29792, Culture=neutral, PublicKeyToken=3af2759e475084d9, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\CommonForms.dll</HintPath>
-    </Reference>
-    <Reference Include="GifComponents, Version=0.1.3747.30698, Culture=neutral, PublicKeyToken=3af2759e475084d9, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\GifComponents.dll</HintPath>
-    </Reference>
     <Reference Include="SharpApng, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\SharpApng.dll</HintPath>
@@ -100,6 +93,11 @@
     <Compile Include="MapleLib\WzLib\WzStructure\InfoTool.cs" />
     <Compile Include="MapleLib\WzLib\WzStructure\MapInfo.cs" />
     <Compile Include="MapleLib\WzLib\WzStructure\MapleBool.cs" />
+    <Compile Include="NGif\AnimatedGifEncoder.cs" />
+    <Compile Include="NGif\GifDecoder.cs" />
+    <Compile Include="NGif\GifEncoder.cs" />
+    <Compile Include="NGif\LZWEncoder.cs" />
+    <Compile Include="NGif\NeuQuant.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="OutputMethods.cs" />
     <Compile Include="Program.cs" />
@@ -112,6 +110,9 @@
     <Content Include="libpng15.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -104,7 +104,8 @@ namespace MSIT
                 catch (Exception e)
                 {
                     Console.WriteLine("An error occured while retrieving frames. Check your arguments.");
-                    Console.WriteLine(e.ToString());
+                    Console.WriteLine(e);
+                    throw;
                 }
                 wz.Dispose();
             }
@@ -119,5 +120,16 @@ namespace MSIT
             Console.WriteLine();
             set.WriteOptionDescriptions(Console.Out);
         }
+
+        internal static int GCD(IEnumerable<int> numbers)
+        {
+            return numbers.Aggregate(GCD);
+        }
+
+        private static int GCD(int a, int b)
+        {
+            return b == 0 ? a : GCD(b, a % b);
+        }
+
     }
 }

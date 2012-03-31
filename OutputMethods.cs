@@ -16,11 +16,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
-using GifComponents;
 using SharpApng;
 using X = SharpApng;
-using Y = GifComponents;
+using Y = NGif;
 
 namespace MSIT
 {
@@ -28,12 +28,16 @@ namespace MSIT
     {
         public static void OutputGIF(IEnumerable<Frame> frames, String fn)
         {
-            var age = new AnimatedGifEncoder();
-            foreach (Frame f in frames)
+            Y.AnimatedGifEncoder gif = new Y.AnimatedGifEncoder();
+            gif.SetQuality(4);
+            gif.SetRepeat(0);
+            gif.Start(fn);
+            foreach(Frame f in frames)
             {
-                age.AddFrame(new GifFrame(f.Image) {Delay = f.Delay/10});
+                gif.SetDelay(f.Delay);
+                gif.AddFrame(f.Image);
             }
-            age.WriteToFile(fn);
+            gif.Finish();
         }
 
         public static void OutputPNG(IEnumerable<Frame> frames, String fn)

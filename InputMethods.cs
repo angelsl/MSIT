@@ -34,18 +34,12 @@ namespace MSIT
             {
                 var iwc = (iwzo is WzUOLProperty ? ((WzUOLProperty) iwzo).Resolve() : iwzo) as WzCanvasProperty;
                 if (iwc == null) continue;
-                try
-                {
-                    int n = int.Parse(iwzo.Name);
-                    r.Add(new Frame(n,
+                int n;
+                if (!int.TryParse(iwzo.Name, out n)) continue;
+                r.Add(new Frame(n,
                                     iwc.PngProperty.GetPNG(false),
-                                    ((WzVectorProperty) iwc.GetProperty("origin")).Pos,
-                                    iwc.GetProperty("delay") != null ? ((WzCompressedIntProperty) iwc.GetProperty("delay")).Value : 100));
-                }
-                catch
-                {
-                    continue;
-                }
+                                    ((WzVectorProperty)iwc.GetProperty("origin")).Pos,
+                                    iwc.GetProperty("delay") != null ? iwc.GetProperty("delay").ToInt() : 100));
             }
             return r.OrderBy(f => f.Number).ToList();
         }
@@ -64,6 +58,19 @@ namespace MSIT
             while (ret is WzUOLProperty)
                 ret = ((WzUOLProperty) ret).LinkValue;
             return ret;
+        }
+
+        public static int ToInt(this IWzObject izo)
+        {
+            if (izo is WzCompressedIntProperty)
+            {
+                return ((WzCompressedIntProperty)izo).Value;
+            }
+            else if (izo is WzStringProperty)
+            {
+                return int.Parse(((WzStringProperty)izo).Value);
+            }
+            else throw new InvalidOperationException(String.Format("Cannot convert {0} to integer.", izo.GetType().Name));
         }
     }
 }
