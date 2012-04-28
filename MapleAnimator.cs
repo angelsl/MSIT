@@ -1,4 +1,4 @@
-﻿// This file is part of MSIT. This file may have been taken from other applications and libraries.
+﻿// This file is part of MSIT.
 // 
 // MSIT is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,9 +12,8 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with MSIT.  If not, see <http://www.gnu.org/licenses/>.
-using System;
+
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -26,11 +25,11 @@ namespace MSIT
         // Algorithm stolen from haha01haha01 http://code.google.com/p/hasuite/source/browse/trunk/HaRepackerLib/AnimationBuilder.cs
         public static IEnumerable<Frame> Process(Rectangle padding, Color background, params List<Frame>[] zframess)
         {
-            var framess = zframess.Select(aframess => aframess.Select(f => new Frame(f.Number, f.Image, new Point(-f.Offset.X, -f.Offset.Y), f.Delay)).ToList()).ToList();
+            List<List<Frame>> framess = zframess.Select(aframess => aframess.Select(f => new Frame(f.Number, f.Image, new Point(-f.Offset.X, -f.Offset.Y), f.Delay)).ToList()).ToList();
             framess = PadOffsets(NormaliseOffsets(framess), padding);
             Size fs = GetFrameSize(framess, padding);
             framess = framess.Select(f => f.OrderBy(z => z.Number).ToList()).ToList();
-            var frames = MergeMultiple(framess, fs, background).OrderBy(z => z.Number).ToList();
+            List<Frame> frames = MergeMultiple(framess, fs, background).OrderBy(z => z.Number).ToList();
             return FinalProcess(frames, fs, background);
         }
 
@@ -52,7 +51,6 @@ namespace MSIT
             int w = framess.SelectMany(x => x).Max(x => padding.X + x.Offset.X + x.Image.Width + padding.Width);
             int h = framess.SelectMany(x => x).Max(x => padding.Y + x.Offset.Y + x.Image.Height + padding.Height);
             return new Size(w, h);
-            
         }
 
         private static List<Frame> MergeMultiple(List<List<Frame>> framess, Size fs, Color bg)
@@ -60,33 +58,32 @@ namespace MSIT
             if (framess.Count() == 1) return framess.First();
             List<Frame> merged = new List<Frame>();
             List<List<Frame>.Enumerator> ers = framess.Select(x => x.GetEnumerator()).Select(x =>
-                {
-                    x.MoveNext();
-                    return x;
-                }
-
-    ).ToList();
+                                                                                                 {
+                                                                                                     x.MoveNext();
+                                                                                                     return x;
+                                                                                                 }).ToList();
             int no = 0;
-            while(ers.Count > 0)
+            while (ers.Count > 0)
             {
-                
                 int mindelay = ers.Min(x => x.Current.Delay);
-                foreach(var e in ers)
+                foreach (List<Frame>.Enumerator e in ers)
                 {
                     e.Current.Delay -= mindelay;
                 }
                 Bitmap b = new Bitmap(fs.Width, fs.Height);
                 Graphics g = Graphics.FromImage(b);
                 g.FillRectangle(new SolidBrush(bg), 0, 0, b.Width, b.Height);
-                foreach(var e in ers)
+                foreach (List<Frame>.Enumerator e in ers)
                 {
                     g.DrawImage(e.Current.Image, e.Current.Offset);
                 }
                 g.Flush(FlushIntention.Sync);
-                merged.Add(new Frame(no++, b, new Point(0,0), mindelay));
-                ers = ers.Where(e => e.Current.Delay > 0 || e.MoveNext()).Select(e => { if(e.Current.Delay <= 0) e.MoveNext();
-                                                                                                   return e;
-                }).ToList();
+                merged.Add(new Frame(no++, b, new Point(0, 0), mindelay));
+                ers = ers.Where(e => e.Current.Delay > 0 || e.MoveNext()).Select(e =>
+                                                                                     {
+                                                                                         if (e.Current.Delay <= 0) e.MoveNext();
+                                                                                         return e;
+                                                                                     }).ToList();
             }
             return merged;
         }

@@ -1,4 +1,4 @@
-﻿// This file is part of MSIT. This file may have been taken from other applications and libraries.
+﻿// This file is part of MSIT.
 // 
 // MSIT is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,15 +12,13 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with MSIT.  If not, see <http://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
+using MSIT.NGif;
 using SharpApng;
 using X = SharpApng;
-using Y = NGif;
 
 namespace MSIT
 {
@@ -28,11 +26,11 @@ namespace MSIT
     {
         public static void OutputGIF(IEnumerable<Frame> frames, String fn)
         {
-            Y.AnimatedGifEncoder gif = new Y.AnimatedGifEncoder();
+            AnimatedGifEncoder gif = new AnimatedGifEncoder();
             gif.SetQuality(4);
             gif.SetRepeat(0);
             gif.Start(fn);
-            foreach(Frame f in frames)
+            foreach (Frame f in frames)
             {
                 gif.SetDelay(f.Delay);
                 gif.AddFrame(f.Image);
@@ -43,7 +41,7 @@ namespace MSIT
         public static void OutputPNG(IEnumerable<Frame> frames, String fn)
         {
             frames = frames.OrderBy(f => f.Number);
-            var apng = new Apng();
+            Apng apng = new Apng();
             foreach (Frame f in frames)
             {
                 apng.AddFrame(f.Image, f.Delay, 1000);

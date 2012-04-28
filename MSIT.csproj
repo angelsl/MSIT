@@ -49,50 +49,6 @@
     <Compile Include="Frame.cs" />
     <Compile Include="InputMethods.cs" />
     <Compile Include="MapleAnimator.cs" />
-    <Compile Include="MapleLib\Helpers\ErrorLogger.cs" />
-    <Compile Include="MapleLib\MapleCryptoLib\AESEncryption.cs" />
-    <Compile Include="MapleLib\MapleCryptoLib\CryptoConstants.cs" />
-    <Compile Include="MapleLib\MapleCryptoLib\MapleCrypto.cs" />
-    <Compile Include="MapleLib\MapleCryptoLib\MapleCustomEncryption.cs" />
-    <Compile Include="MapleLib\WzLib\IExtended.cs" />
-    <Compile Include="MapleLib\WzLib\IPropertyContainer.cs" />
-    <Compile Include="MapleLib\WzLib\IWzFile.cs" />
-    <Compile Include="MapleLib\WzLib\IWzImageProperty.cs" />
-    <Compile Include="MapleLib\WzLib\IWzObject.cs" />
-    <Compile Include="MapleLib\WzLib\Util\MP3Header.cs" />
-    <Compile Include="MapleLib\WzLib\Util\WzBinaryReader.cs" />
-    <Compile Include="MapleLib\WzLib\Util\WzBinaryWriter.cs" />
-    <Compile Include="MapleLib\WzLib\Util\WzKeyGenerator.cs" />
-    <Compile Include="MapleLib\WzLib\Util\WzTool.cs" />
-    <Compile Include="MapleLib\WzLib\Util\XmlUtil.cs" />
-    <Compile Include="MapleLib\WzLib\WzDirectory.cs" />
-    <Compile Include="MapleLib\WzLib\WzFile.cs" />
-    <Compile Include="MapleLib\WzLib\WzHeader.cs" />
-    <Compile Include="MapleLib\WzLib\WzImage.cs" />
-    <Compile Include="MapleLib\WzLib\WzMapleVersion.cs" />
-    <Compile Include="MapleLib\WzLib\WzObjectType.cs" />
-    <Compile Include="MapleLib\WzLib\WzProperties\WzByteFloatProperty.cs" />
-    <Compile Include="MapleLib\WzLib\WzProperties\WzCanvasProperty.cs" />
-    <Compile Include="MapleLib\WzLib\WzProperties\WzCompressedIntProperty.cs" />
-    <Compile Include="MapleLib\WzLib\WzProperties\WzConvexProperty.cs" />
-    <Compile Include="MapleLib\WzLib\WzProperties\WzDoubleProperty.cs" />
-    <Compile Include="MapleLib\WzLib\WzProperties\WzNullProperty.cs" />
-    <Compile Include="MapleLib\WzLib\WzProperties\WzPngProperty.cs" />
-    <Compile Include="MapleLib\WzLib\WzProperties\WzSoundProperty.cs" />
-    <Compile Include="MapleLib\WzLib\WzProperties\WzStringProperty.cs" />
-    <Compile Include="MapleLib\WzLib\WzProperties\WzSubProperty.cs" />
-    <Compile Include="MapleLib\WzLib\WzProperties\WzUnsignedShortProperty.cs" />
-    <Compile Include="MapleLib\WzLib\WzProperties\WzUOLProperty.cs" />
-    <Compile Include="MapleLib\WzLib\WzProperties\WzVectorProperty.cs" />
-    <Compile Include="MapleLib\WzLib\WzPropertyType.cs" />
-    <Compile Include="MapleLib\WzLib\WzSerializer.cs" />
-    <Compile Include="MapleLib\WzLib\WzSettings.cs" />
-    <Compile Include="MapleLib\WzLib\WzStructure\Data\Data.cs" />
-    <Compile Include="MapleLib\WzLib\WzStructure\Data\Enums.cs" />
-    <Compile Include="MapleLib\WzLib\WzStructure\Foothold.cs" />
-    <Compile Include="MapleLib\WzLib\WzStructure\InfoTool.cs" />
-    <Compile Include="MapleLib\WzLib\WzStructure\MapInfo.cs" />
-    <Compile Include="MapleLib\WzLib\WzStructure\MapleBool.cs" />
     <Compile Include="NGif\AnimatedGifEncoder.cs" />
     <Compile Include="NGif\GifDecoder.cs" />
     <Compile Include="NGif\GifEncoder.cs" />
@@ -102,6 +58,36 @@
     <Compile Include="OutputMethods.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WzLib\CryptoConstants.cs" />
+    <Compile Include="WzLib\IExtended.cs" />
+    <Compile Include="WzLib\IPropertyContainer.cs" />
+    <Compile Include="WzLib\IWzFile.cs" />
+    <Compile Include="WzLib\IWzImageProperty.cs" />
+    <Compile Include="WzLib\IWzObject.cs" />
+    <Compile Include="WzLib\Util\MP3Header.cs" />
+    <Compile Include="WzLib\Util\WzBinaryReader.cs" />
+    <Compile Include="WzLib\Util\WzKeyGenerator.cs" />
+    <Compile Include="WzLib\Util\WzTool.cs" />
+    <Compile Include="WzLib\WzDirectory.cs" />
+    <Compile Include="WzLib\WzFile.cs" />
+    <Compile Include="WzLib\WzHeader.cs" />
+    <Compile Include="WzLib\WzImage.cs" />
+    <Compile Include="WzLib\WzMapleVersion.cs" />
+    <Compile Include="WzLib\WzObjectType.cs" />
+    <Compile Include="WzLib\WzProperties\WzByteFloatProperty.cs" />
+    <Compile Include="WzLib\WzProperties\WzCanvasProperty.cs" />
+    <Compile Include="WzLib\WzProperties\WzCompressedIntProperty.cs" />
+    <Compile Include="WzLib\WzProperties\WzConvexProperty.cs" />
+    <Compile Include="WzLib\WzProperties\WzDoubleProperty.cs" />
+    <Compile Include="WzLib\WzProperties\WzNullProperty.cs" />
+    <Compile Include="WzLib\WzProperties\WzPngProperty.cs" />
+    <Compile Include="WzLib\WzProperties\WzSoundProperty.cs" />
+    <Compile Include="WzLib\WzProperties\WzStringProperty.cs" />
+    <Compile Include="WzLib\WzProperties\WzSubProperty.cs" />
+    <Compile Include="WzLib\WzProperties\WzUnsignedShortProperty.cs" />
+    <Compile Include="WzLib\WzProperties\WzUOLProperty.cs" />
+    <Compile Include="WzLib\WzProperties\WzVectorProperty.cs" />
+    <Compile Include="WzLib\WzPropertyType.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="apng.dll">
@@ -114,6 +100,7 @@
   <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

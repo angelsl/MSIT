@@ -1,4 +1,4 @@
-﻿// This file is part of MSIT. This file may have been taken from other applications and libraries.
+﻿// This file is part of MSIT.
 // 
 // MSIT is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,13 +12,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with MSIT.  If not, see <http://www.gnu.org/licenses/>.
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Drawing.Imaging;
-using MapleLib.WzLib;
-using MapleLib.WzLib.WzProperties;
+using System.Linq;
+using MSIT.WzLib;
+using MSIT.WzLib.WzProperties;
 using Mono.Options;
 
 namespace MSIT
@@ -32,35 +33,34 @@ namespace MSIT
             bool printHelp = false;
             string aWzInPath = null;
             bool aPngOutput = false;
-            var aWzVer = (WzMapleVersion) int.MinValue;
+            WzMapleVersion aWzVer = (WzMapleVersion) int.MinValue;
             string aOutputPath = null;
             Color aBgColor = Color.Black;
             int aPadding = 10;
             // input, input-wzfile, input-wzpath, input-wzver, output, output-path, background-color, padding
-            var set = new OptionSet();
+            OptionSet set = new OptionSet();
             set.Add("iwzp=|input-wzpath=", "The path of the animation or image. Required", s => aWzInPath = s);
             set.Add("iwzv=|input-wzver=", "The WZ key to use when decoding the WZ. Required", s => aWzVer = (WzMapleVersion) Enum.Parse(typeof (WzMapleVersion), s));
-            set.Add("o=|output=",
-                    "The method of output: (a)png or gif",
-                    s =>
-                        {
-                            switch (s.ToLower())
-                            {
-                                case "png":
-                                    aPngOutput = true;
-                                    break;
-                                case "gif":
-                                    aPngOutput = false;
-                                    break;
-                                default:
-                                    throw new ArgumentException("output must be either png or gif");
-                            }
-                        });
+            set.Add("o=|output=", "The method of output: (a)png or gif", s =>
+                                                                             {
+                                                                                 switch (s.ToLower())
+                                                                                 {
+                                                                                     case "png":
+                                                                                         aPngOutput = true;
+                                                                                         break;
+                                                                                     case "gif":
+                                                                                         aPngOutput = false;
+                                                                                         break;
+                                                                                     default:
+                                                                                         throw new ArgumentException("output must be either png or gif");
+                                                                                 }
+                                                                             });
             set.Add("op=|output-path=", "The path to write the output, (A)PNG or GIF, to", s => aOutputPath = s);
             set.Add("abg=|a-background-color=", "The background color of the animated output. Default is black. Ignored if /animated is not set.", s => aBgColor = Color.FromArgb(int.Parse(s)));
             set.Add("ap=|a-padding=", "The amount of padding in pixels to pad the animated output with. Default is 10. Ignored if /animated is not set.", s => aPadding = int.Parse(s));
             set.Add("?|h|help", "Shows help", s => printHelp = true);
             set.Parse(args);
+
             #endregion
 
             #region check params
@@ -75,31 +75,36 @@ namespace MSIT
             #endregion
 
             string[] wzpaths = aWzInPath.Split('*');
-            var framess = new List<List<Frame>>();
-            foreach(var wzpath in wzpaths)
+            List<List<Frame>> framess = new List<List<Frame>>();
+            foreach (string wzpath in wzpaths)
             {
                 string[] split = wzpath.Split('?');
                 string path = split[0];
                 string inPath = split[1];
+
                 #region wz parsing
-                var wz = new WzFile(path, aWzVer);
+
+                WzFile wz = new WzFile(path, aWzVer);
                 wz.ParseWzFile();
+
                 #endregion
 
                 #region getting single image
 
-                var wzcp = wz.GetWzObjectFromPath(inPath) as WzCanvasProperty;
+                WzCanvasProperty wzcp = wz.GetWzObjectFromPath(inPath) as WzCanvasProperty;
                 if (wzcp != null)
                 {
-                    var b = wzcp.PngProperty.GetPNG(false);
+                    Bitmap b = wzcp.PngProperty.GetPng(false);
                     b.Save(aOutputPath, aPngOutput ? ImageFormat.Png : ImageFormat.Gif);
                     return;
                 }
+
                 #endregion
+
                 try
                 {
                     List<Frame> data = InputMethods.InputWz(wz, inPath);
-                    if(data.Count > 0) framess.Add(data);
+                    if (data.Count > 0) framess.Add(data);
                 }
                 catch (Exception e)
                 {
@@ -109,7 +114,7 @@ namespace MSIT
                 }
                 wz.Dispose();
             }
-            var final = OffsetAnimator.Process(new Rectangle(aPadding, aPadding, aPadding, aPadding), aBgColor, framess.ToArray());
+            IEnumerable<Frame> final = OffsetAnimator.Process(new Rectangle(aPadding, aPadding, aPadding, aPadding), aBgColor, framess.ToArray());
             if (aPngOutput) OutputMethods.OutputPNG(final, aOutputPath);
             else OutputMethods.OutputGIF(final, aOutputPath);
         }
@@ -120,16 +125,5 @@ namespace MSIT
             Console.WriteLine();
             set.WriteOptionDescriptions(Console.Out);
         }
-
-        internal static int GCD(IEnumerable<int> numbers)
-        {
-            return numbers.Aggregate(GCD);
-        }
-
-        private static int GCD(int a, int b)
-        {
-            return b == 0 ? a : GCD(b, a % b);
-        }
-
     }
 }

@@ -1,4 +1,4 @@
-﻿// This file is part of MSIT.
+// This file is part of MSIT.
 // 
 // MSIT is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,23 +13,14 @@
 // You should have received a copy of the GNU General Public License
 // along with MSIT.  If not, see <http://www.gnu.org/licenses/>.
 
-using System.Drawing;
-
-namespace MSIT
+namespace MSIT.WzLib
 {
-    internal class Frame
+    public enum WzObjectType
     {
-        public int Delay;
-        public Bitmap Image;
-        public int Number;
-        public Point Offset;
-
-        public Frame(int no, Bitmap image, Point offset, int delay)
-        {
-            Number = no;
-            Image = image;
-            Offset = offset;
-            Delay = delay;
-        }
+        File,
+        Image,
+        Directory,
+        Property,
+        List
     }
 }
