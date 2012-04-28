@@ -115,7 +115,7 @@ namespace MSIT.WzLib
             switch (reader.ReadByte())
             {
                 case 0x1B:
-                    return ExtractMore(reader, offset, endOfBlock, name, reader.ReadStringAtOffset(offset + reader.ReadInt32()), parent, imgParent, enc);
+                    return ExtractMore(reader, offset, endOfBlock, name, reader.ReadStringAtOffset(offset + reader.ReadInt32(), false, enc), parent, imgParent, enc);
                 case 0x73:
                     return ExtractMore(reader, offset, endOfBlock, name, "", parent, imgParent, enc);
                 default:
@@ -167,7 +167,7 @@ namespace MSIT.WzLib
                         case 0:
                             return new WzUOLProperty(name, reader.ReadWzString(enc)) {Parent = parent};
                         case 1:
-                            return new WzUOLProperty(name, reader.ReadStringAtOffset(offset + reader.ReadInt32(), false, true)) {Parent = parent};
+                            return new WzUOLProperty(name, reader.ReadStringAtOffset(offset + reader.ReadInt32(), false, enc)) {Parent = parent};
                     }
                     throw new Exception("Unsupported UOL type");
                 default:
