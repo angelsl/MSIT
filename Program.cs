@@ -32,6 +32,7 @@ namespace MSIT
 
             bool printHelp = false;
             string aWzInPath = null;
+            bool aWzNamesEnc = true;
             bool aPngOutput = false;
             WzMapleVersion aWzVer = (WzMapleVersion) int.MinValue;
             string aOutputPath = null;
@@ -41,6 +42,7 @@ namespace MSIT
             OptionSet set = new OptionSet();
             set.Add("iwzp=|input-wzpath=", "The path of the animation or image. Required", s => aWzInPath = s);
             set.Add("iwzv=|input-wzver=", "The WZ key to use when decoding the WZ. Required", s => aWzVer = (WzMapleVersion) Enum.Parse(typeof (WzMapleVersion), s));
+            set.Add("iwzne|input-wz-names-not-encrypted", "Flag if WZ image names are not encrypted. ", s => aWzNamesEnc = false);
             set.Add("o=|output=", "The method of output: (a)png or gif", s =>
                                                                              {
                                                                                  switch (s.ToLower())
@@ -84,7 +86,7 @@ namespace MSIT
 
                 #region wz parsing
 
-                WzFile wz = new WzFile(path, aWzVer);
+                WzFile wz = new WzFile(path, aWzVer, aWzNamesEnc);
                 wz.ParseWzFile();
 
                 #endregion

@@ -67,7 +67,7 @@ namespace MSIT.WzLib
 
         #region Extended Properties Parsing
 
-        internal static List<IWzImageProperty> ParsePropertyList(uint offset, WzBinaryReader reader, IWzObject parent, WzImage parentImg, bool enc = true)
+        internal static List<IWzImageProperty> ParsePropertyList(uint offset, WzBinaryReader reader, IWzObject parent, WzImage parentImg, bool enc)
         {
             int entryCount = reader.ReadCompressedInt();
             List<IWzImageProperty> properties = new List<IWzImageProperty>(entryCount);
@@ -131,7 +131,7 @@ namespace MSIT.WzLib
                 case "Property":
                     WzSubProperty subProp = new WzSubProperty(name) {Parent = parent};
                     reader.BaseStream.Position += 2;
-                    subProp.AddProperties(ParsePropertyList(offset, reader, subProp, imgParent));
+                    subProp.AddProperties(ParsePropertyList(offset, reader, subProp, imgParent, enc));
                     return subProp;
                 case "Canvas":
                     WzCanvasProperty canvasProp = new WzCanvasProperty(name) {Parent = parent};
@@ -139,9 +139,9 @@ namespace MSIT.WzLib
                     if (reader.ReadByte() == 1)
                     {
                         reader.BaseStream.Position += 2;
-                        canvasProp.AddProperties(ParsePropertyList(offset, reader, canvasProp, imgParent));
+                        canvasProp.AddProperties(ParsePropertyList(offset, reader, canvasProp, imgParent, enc));
                     }
-                    canvasProp.PngProperty = new WzPngProperty(reader, imgParent.parseEverything) {Parent = canvasProp};
+                    canvasProp.PngProperty = new WzPngProperty(reader, imgParent.parseEverything, enc) {Parent = canvasProp};
                     return canvasProp;
                 case "Shape2D#Vector2D":
                     WzVectorProperty vecProp = new WzVectorProperty(name) {Parent = parent};

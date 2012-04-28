@@ -38,6 +38,7 @@ namespace MSIT.WzLib.WzProperties
         private byte[] _compressedBytes;
         private int _height;
         private bool _listWzUsed;
+        private bool _enc;
         private Bitmap _png;
         private int _width;
 
@@ -46,7 +47,7 @@ namespace MSIT.WzLib.WzProperties
         /// <summary>
         ///   Creates a blank WzPngProperty
         /// </summary>
-        internal WzPngProperty(WzBinaryReader reader, bool parseNow)
+        internal WzPngProperty(WzBinaryReader reader, bool parseNow, bool enc)
         {
             // Read compressed bytes
             _width = reader.ReadCompressedInt();
@@ -57,6 +58,7 @@ namespace MSIT.WzLib.WzProperties
             _offset = reader.BaseStream.Position;
             int len = reader.ReadInt32() - 1;
             reader.BaseStream.Position += 1;
+            _enc = enc;
 
             if (len > 0)
             {
@@ -144,7 +146,8 @@ namespace MSIT.WzLib.WzProperties
                     int blocksize = reader.ReadInt32();
                     for (int i = 0; i < blocksize; i++)
                     {
-                        dataStream.WriteByte((byte) (reader.ReadByte() ^ imgParent.reader.WzKey[i]));
+                        
+                        dataStream.WriteByte(_enc?((byte) (reader.ReadByte() ^ imgParent.reader.WzKey[i])):reader.ReadByte());
                     }
                 }
                 dataStream.Position = 2;
@@ -230,11 +233,6 @@ namespace MSIT.WzLib.WzProperties
         internal override Bitmap ToBitmap(Bitmap def)
         {
             return GetPng(false);
-        }
-
-        internal override byte[] ToBytes(byte[] def)
-        {
-            return base.ToBytes(def);
         }
 
         #endregion

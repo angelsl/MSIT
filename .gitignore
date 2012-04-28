@@ -4,3 +4,5 @@
 /obj
 /MSIT.csproj.user
 *.pfx
+*.suo
+*.sln

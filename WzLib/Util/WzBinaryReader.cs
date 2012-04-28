@@ -167,20 +167,6 @@ namespace MSIT.WzLib.Util
             return offset;
         }
 
-        public string DecryptString(char[] stringToDecrypt)
-        {
-            string outputString = "";
-            for (int i = 0; i < stringToDecrypt.Length; i++) outputString += (char) (stringToDecrypt[i] ^ ((char) ((WzKey[i*2 + 1] << 8) + WzKey[i*2])));
-            return outputString;
-        }
-
-        public string DecryptNonUnicodeString(char[] stringToDecrypt)
-        {
-            string outputString = "";
-            for (int i = 0; i < stringToDecrypt.Length; i++) outputString += (char) (stringToDecrypt[i] ^ WzKey[i]);
-            return outputString;
-        }
-
         public string ReadStringBlock(uint offset, bool enc = true)
         {
             switch (ReadByte())

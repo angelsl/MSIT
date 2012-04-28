@@ -38,24 +38,24 @@ namespace MSIT.WzLib
         internal short version;
         internal uint versionHash;
         internal WzDirectory wzDir;
+        private bool _namesEnc = false;
 
         #endregion
 
-        public WzFile(short gameVersion, WzMapleVersion version)
+        public WzFile(short gameVersion, WzMapleVersion version, bool namesEnc)
         {
-            wzDir = new WzDirectory();
             Header = WzHeader.GetDefault();
             fileVersion = gameVersion;
             mapleVersion = version;
             WzIv = WzTool.GetIvByMapleVersion(version);
-            wzDir.WzIv = WzIv;
+            _namesEnc = namesEnc;
         }
 
         /// <summary>
         ///   Open a wz file from a file on the disk
         /// </summary>
         /// <param name="filePath"> Path to the wz file </param>
-        public WzFile(string filePath, WzMapleVersion version)
+        public WzFile(string filePath, WzMapleVersion version, bool namesEnc)
         {
             name = Path.GetFileName(filePath);
             path = filePath;
@@ -68,13 +68,14 @@ namespace MSIT.WzLib
                 zlzStream.Close();
             }
             else WzIv = WzTool.GetIvByMapleVersion(version);
+            _namesEnc = namesEnc;
         }
 
         /// <summary>
         ///   Open a wz file from a file on the disk
         /// </summary>
         /// <param name="filePath"> Path to the wz file </param>
-        public WzFile(string filePath, short gameVersion, WzMapleVersion version)
+        public WzFile(string filePath, short gameVersion, WzMapleVersion version, bool namesEnc)
         {
             name = Path.GetFileName(filePath);
             path = filePath;
@@ -87,6 +88,7 @@ namespace MSIT.WzLib
                 zlzStream.Close();
             }
             else WzIv = WzTool.GetIvByMapleVersion(version);
+            _namesEnc = namesEnc;
         }
 
         /// <summary>
@@ -219,7 +221,7 @@ namespace MSIT.WzLib
                         WzDirectory testDirectory = null;
                         try
                         {
-                            testDirectory = new WzDirectory(reader, name, versionHash, WzIv, this);
+                            testDirectory = new WzDirectory(reader, name, versionHash, WzIv, this, _namesEnc);
                             testDirectory.ParseDirectory();
                         }
                         catch
@@ -240,7 +242,7 @@ namespace MSIT.WzLib
                                 case 0x73:
                                 case 0x1b:
                                     {
-                                        WzDirectory directory = new WzDirectory(reader, name, versionHash, WzIv, this);
+                                        WzDirectory directory = new WzDirectory(reader, name, versionHash, WzIv, this, _namesEnc);
                                         directory.ParseDirectory();
                                         wzDir = directory;
                                         return;
@@ -260,7 +262,7 @@ namespace MSIT.WzLib
             {
                 versionHash = GetVersionHash(version, fileVersion);
                 reader.Hash = versionHash;
-                WzDirectory directory = new WzDirectory(reader, name, versionHash, WzIv, this);
+                WzDirectory directory = new WzDirectory(reader, name, versionHash, WzIv, this, _namesEnc);
                 directory.ParseDirectory();
                 wzDir = directory;
             }

@@ -38,24 +38,11 @@ namespace MSIT.WzLib
         internal int size;
         internal List<WzDirectory> subDirs = new List<WzDirectory>();
         internal WzFile wzFile;
+        internal bool namesEnc;
 
         #endregion
 
-        /// <summary>
-        ///   Creates a blank WzDirectory
-        /// </summary>
-        public WzDirectory()
-        {
-        }
-
-        /// <summary>
-        ///   Creates a WzDirectory with the given name
-        /// </summary>
-        /// <param name="name"> The name of the directory </param>
-        public WzDirectory(string name)
-        {
-            this.name = name;
-        }
+        internal WzDirectory() {}
 
         /// <summary>
         ///   Creates a WzDirectory
@@ -64,13 +51,14 @@ namespace MSIT.WzLib
         /// <param name="blockStart"> The start of the data block </param>
         /// <param name="parentname"> The name of the directory </param>
         /// <param name="wzFile"> The parent Wz File </param>
-        internal WzDirectory(WzBinaryReader reader, string dirName, uint verHash, byte[] WzIv, WzFile wzFile)
+        internal WzDirectory(WzBinaryReader reader, string dirName, uint verHash, byte[] WzIv, WzFile wzFile, bool ne)
         {
             this.reader = reader;
             name = dirName;
             hash = verHash;
             this.WzIv = WzIv;
             this.wzFile = wzFile;
+            namesEnc = ne;
         }
 
         /// <summary>
@@ -204,11 +192,11 @@ namespace MSIT.WzLib
                     rememberPos = reader.BaseStream.Position;
                     reader.BaseStream.Position = reader.Header.FStart + stringOffset;
                     type = reader.ReadByte();
-                    fname = reader.ReadWzString();
+                    fname = reader.ReadWzString(namesEnc);
                 }
                 else if (type == 3 || type == 4)
                 {
-                    fname = reader.ReadWzString();
+                    fname = reader.ReadWzString(namesEnc);
                     rememberPos = reader.BaseStream.Position;
                 }
                 reader.BaseStream.Position = rememberPos;
@@ -217,7 +205,7 @@ namespace MSIT.WzLib
                 offset = reader.ReadOffset();
                 if (type == 3)
                 {
-                    WzDirectory subDir = new WzDirectory(reader, fname, hash, WzIv, wzFile);
+                    WzDirectory subDir = new WzDirectory(reader, fname, hash, WzIv, wzFile, namesEnc);
                     subDir.BlockSize = fsize;
                     subDir.Checksum = checksum;
                     subDir.Offset = offset;
