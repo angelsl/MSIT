@@ -21,6 +21,8 @@ For more information, see `MSIT /?`.
 * GMS v56+ & GMST: `GMS`
 * EMS & KMS & KMST & MSEA: `EMS`
 * BMS & GMS v55-: `BMS`
+ 
+`MSEA`, `JMS` and `JMST` require the `/iwzne` flag.
 
 ## Libraries & Credits
 
