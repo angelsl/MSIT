@@ -19,8 +19,8 @@ For more information, see `MSIT /?`.
 ### WZ Versions
 
 * GMS v56+ & GMST: `GMS`
-* EMS & KMS & KMST & MSEA v91-: `EMS`
-* BMS & GMS v55- & MSEA v92+: `BMS`
+* EMS & KMS & KMST & MSEA: `EMS`
+* BMS & GMS v55-: `BMS`
 
 ## Libraries & Credits
 
