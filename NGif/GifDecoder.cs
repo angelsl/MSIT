@@ -119,9 +119,7 @@ namespace MSIT.NGif
             //
             delay = -1;
             if ((n >= 0) && (n < frameCount))
-            {
-                delay = ((GifFrame) frames[n]).delay;
-            }
+                delay = ((GifFrame)frames[n]).delay;
             return delay;
         }
 
@@ -168,9 +166,7 @@ namespace MSIT.NGif
             int[] pixels = new int[3*image.Width*image.Height];
             int count = 0;
             for (int th = 0; th < image.Height; th++)
-            {
-                for (int tw = 0; tw < image.Width; tw++)
-                {
+                for (int tw = 0; tw < image.Width; tw++) {
                     Color color = bitmap.GetPixel(tw, th);
                     pixels[count] = color.R;
                     count++;
@@ -179,7 +175,6 @@ namespace MSIT.NGif
                     pixels[count] = color.B;
                     count++;
                 }
-            }
             return pixels;
         }
 
@@ -187,13 +182,10 @@ namespace MSIT.NGif
         {
             int count = 0;
             for (int th = 0; th < image.Height; th++)
-            {
-                for (int tw = 0; tw < image.Width; tw++)
-                {
+                for (int tw = 0; tw < image.Width; tw++) {
                     Color color = Color.FromArgb(pixels[count++]);
                     bitmap.SetPixel(tw, th, color);
                 }
-            }
         }
 
         protected void SetPixels()
@@ -204,44 +196,32 @@ namespace MSIT.NGif
             int[] dest = GetPixels(bitmap);
 
             // fill in starting image contents based on last image's dispose code
-            if (lastDispose > 0)
-            {
-                if (lastDispose == 3)
-                {
+            if (lastDispose > 0) {
+                if (lastDispose == 3) {
                     // use image before last
                     int n = frameCount - 2;
                     if (n > 0)
-                    {
                         lastImage = GetFrame(n - 1);
-                    }
                     else
-                    {
                         lastImage = null;
-                    }
                 }
 
-                if (lastImage != null)
-                {
+                if (lastImage != null) {
                     //				int[] prev =
                     //					((DataBufferInt) lastImage.getRaster().getDataBuffer()).getData();
                     int[] prev = GetPixels(new Bitmap(lastImage));
                     Array.Copy(prev, 0, dest, 0, width*height);
                     // copy pixels
 
-                    if (lastDispose == 2)
-                    {
+                    if (lastDispose == 2) {
                         // fill last image rect area with background color
                         Graphics g = Graphics.FromImage(image);
                         Color c = Color.Empty;
                         if (transparency)
-                        {
                             c = Color.FromArgb(0, 0, 0, 0); // assume background is transparent
-                        }
                         else
-                        {
                             c = Color.FromArgb(lastBgColor);
                             //						c = new Color(lastBgColor); // use given background color
-                        }
                         Brush brush = new SolidBrush(c);
                         g.FillRectangle(brush, lastRect);
                         brush.Dispose();
@@ -254,16 +234,12 @@ namespace MSIT.NGif
             int pass = 1;
             int inc = 8;
             int iline = 0;
-            for (int i = 0; i < ih; i++)
-            {
+            for (int i = 0; i < ih; i++) {
                 int line = i;
-                if (interlace)
-                {
-                    if (iline >= ih)
-                    {
+                if (interlace) {
+                    if (iline >= ih) {
                         pass++;
-                        switch (pass)
-                        {
+                        switch (pass) {
                             case 2:
                                 iline = 4;
                                 break;
@@ -281,25 +257,19 @@ namespace MSIT.NGif
                     iline += inc;
                 }
                 line += iy;
-                if (line < height)
-                {
+                if (line < height) {
                     int k = line*width;
                     int dx = k + ix; // start of line in dest
                     int dlim = dx + iw; // end of dest line
                     if ((k + width) < dlim)
-                    {
                         dlim = k + width; // past dest edge
-                    }
                     int sx = i*iw; // start of line in source
-                    while (dx < dlim)
-                    {
+                    while (dx < dlim) {
                         // map color and insert in destination
                         int index = (pixels[sx++]) & 0xff;
                         int c = act[index];
                         if (c != 0)
-                        {
                             dest[dx] = c;
-                        }
                         dx++;
                     }
                 }
@@ -317,9 +287,7 @@ namespace MSIT.NGif
         {
             Image im = null;
             if ((n >= 0) && (n < frameCount))
-            {
-                im = ((GifFrame) frames[n]).image;
-            }
+                im = ((GifFrame)frames[n]).image;
             return im;
         }
 
@@ -344,24 +312,17 @@ namespace MSIT.NGif
         public int Read(Stream inStream)
         {
             Init();
-            if (inStream != null)
-            {
+            if (inStream != null) {
                 this.inStream = inStream;
                 ReadHeader();
-                if (!Error())
-                {
+                if (!Error()) {
                     ReadContents();
                     if (frameCount < 0)
-                    {
                         status = STATUS_FORMAT_ERROR;
-                    }
                 }
                 inStream.Close();
-            }
-            else
-            {
+            } else
                 status = STATUS_OPEN_ERROR;
-            }
             return status;
         }
 
@@ -376,13 +337,10 @@ namespace MSIT.NGif
         public int Read(String name)
         {
             status = STATUS_OK;
-            try
-            {
+            try {
                 name = name.Trim().ToLower();
                 status = Read(new FileInfo(name).OpenRead());
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 status = STATUS_OPEN_ERROR;
             }
 
@@ -401,9 +359,7 @@ namespace MSIT.NGif
             int available, clear, code_mask, code_size, end_of_information, in_code, old_code, bits, code, count, i, datum, data_size, first, top, bi, pi;
 
             if ((pixels == null) || (pixels.Length < npix))
-            {
                 pixels = new byte[npix]; // allocate new pixel array
-            }
             if (prefix == null) prefix = new short[MaxStackSize];
             if (suffix == null) suffix = new byte[MaxStackSize];
             if (pixelStack == null) pixelStack = new byte[MaxStackSize + 1];
@@ -417,25 +373,20 @@ namespace MSIT.NGif
             old_code = NullCode;
             code_size = data_size + 1;
             code_mask = (1 << code_size) - 1;
-            for (code = 0; code < clear; code++)
-            {
+            for (code = 0; code < clear; code++) {
                 prefix[code] = 0;
-                suffix[code] = (byte) code;
+                suffix[code] = (byte)code;
             }
 
             //  Decode GIF pixel stream.
 
             datum = bits = count = first = top = pi = bi = 0;
 
-            for (i = 0; i < npix;)
-            {
-                if (top == 0)
-                {
-                    if (bits < code_size)
-                    {
+            for (i = 0; i < npix;) {
+                if (top == 0) {
+                    if (bits < code_size) {
                         //  Load bytes until there are enough bits for a code.
-                        if (count == 0)
-                        {
+                        if (count == 0) {
                             // Read a new data block.
                             count = ReadBlock();
                             if (count <= 0) break;
@@ -457,8 +408,7 @@ namespace MSIT.NGif
                     //  Interpret the code
 
                     if ((code > available) || (code == end_of_information)) break;
-                    if (code == clear)
-                    {
+                    if (code == clear) {
                         //  Reset decoder.
                         code_size = data_size + 1;
                         code_mask = (1 << code_size) - 1;
@@ -466,21 +416,18 @@ namespace MSIT.NGif
                         old_code = NullCode;
                         continue;
                     }
-                    if (old_code == NullCode)
-                    {
+                    if (old_code == NullCode) {
                         pixelStack[top++] = suffix[code];
                         old_code = code;
                         first = code;
                         continue;
                     }
                     in_code = code;
-                    if (code == available)
-                    {
-                        pixelStack[top++] = (byte) first;
+                    if (code == available) {
+                        pixelStack[top++] = (byte)first;
                         code = old_code;
                     }
-                    while (code > clear)
-                    {
+                    while (code > clear) {
                         pixelStack[top++] = suffix[code];
                         code = prefix[code];
                     }
@@ -489,12 +436,11 @@ namespace MSIT.NGif
                     //  Add a new string to the string table,
 
                     if (available >= MaxStackSize) break;
-                    pixelStack[top++] = (byte) first;
-                    prefix[available] = (short) old_code;
-                    suffix[available] = (byte) first;
+                    pixelStack[top++] = (byte)first;
+                    prefix[available] = (short)old_code;
+                    suffix[available] = (byte)first;
                     available++;
-                    if (((available & code_mask) == 0) && (available < MaxStackSize))
-                    {
+                    if (((available & code_mask) == 0) && (available < MaxStackSize)) {
                         code_size++;
                         code_mask += available;
                     }
@@ -509,9 +455,7 @@ namespace MSIT.NGif
             }
 
             for (i = pi; i < npix; i++)
-            {
                 pixels[i] = 0; // clear missing pixels
-            }
         }
 
         /**
@@ -543,12 +487,9 @@ namespace MSIT.NGif
         protected int Read()
         {
             int curByte = 0;
-            try
-            {
+            try {
                 curByte = inStream.ReadByte();
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 status = STATUS_FORMAT_ERROR;
             }
             return curByte;
@@ -564,26 +505,18 @@ namespace MSIT.NGif
         {
             blockSize = Read();
             int n = 0;
-            if (blockSize > 0)
-            {
-                try
-                {
+            if (blockSize > 0) {
+                try {
                     int count = 0;
-                    while (n < blockSize)
-                    {
+                    while (n < blockSize) {
                         count = inStream.Read(block, n, blockSize - n);
                         if (count == -1) break;
                         n += count;
                     }
-                }
-                catch (IOException e)
-                {
-                }
+                } catch (IOException e) {}
 
                 if (n < blockSize)
-                {
                     status = STATUS_FORMAT_ERROR;
-                }
             }
             return n;
         }
@@ -601,28 +534,20 @@ namespace MSIT.NGif
             int[] tab = null;
             byte[] c = new byte[nbytes];
             int n = 0;
-            try
-            {
+            try {
                 n = inStream.Read(c, 0, c.Length);
-            }
-            catch (IOException e)
-            {
-            }
+            } catch (IOException e) {}
             if (n < nbytes)
-            {
                 status = STATUS_FORMAT_ERROR;
-            }
-            else
-            {
+            else {
                 tab = new int[256]; // max size to avoid bounds checks
                 int i = 0;
                 int j = 0;
-                while (i < ncolors)
-                {
+                while (i < ncolors) {
                     int r = (c[j++]) & 0xff;
                     int g = (c[j++]) & 0xff;
                     int b = (c[j++]) & 0xff;
-                    tab[i++] = (int) (0xff000000 | (r << 16) | (g << 8) | b);
+                    tab[i++] = (int)(0xff000000 | (r << 16) | (g << 8) | b);
                 }
             }
             return tab;
@@ -636,19 +561,16 @@ namespace MSIT.NGif
         {
             // read GIF file content blocks
             bool done = false;
-            while (!(done || Error()))
-            {
+            while (!(done || Error())) {
                 int code = Read();
-                switch (code)
-                {
+                switch (code) {
                     case 0x2C: // image separator
                         ReadImage();
                         break;
 
                     case 0x21: // extension
                         code = Read();
-                        switch (code)
-                        {
+                        switch (code) {
                             case 0xf9: // graphics control extension
                                 ReadGraphicControlExt();
                                 break;
@@ -657,13 +579,9 @@ namespace MSIT.NGif
                                 ReadBlock();
                                 String app = "";
                                 for (int i = 0; i < 11; i++)
-                                {
-                                    app += (char) block[i];
-                                }
+                                    app += (char)block[i];
                                 if (app.Equals("NETSCAPE2.0"))
-                                {
                                     ReadNetscapeExt();
-                                }
                                 else Skip(); // don't care
                                 break;
 
@@ -697,9 +615,7 @@ namespace MSIT.NGif
             int packed = Read(); // packed fields
             dispose = (packed & 0x1c) >> 2; // disposal method
             if (dispose == 0)
-            {
                 dispose = 1; // elect to keep old image if discretionary
-            }
             transparency = (packed & 1) != 0;
             delay = ReadShort()*10; // delay in milliseconds
             transIndex = Read(); // transparent color index
@@ -714,18 +630,14 @@ namespace MSIT.NGif
         {
             String id = "";
             for (int i = 0; i < 6; i++)
-            {
-                id += (char) Read();
-            }
-            if (!id.StartsWith("GIF"))
-            {
+                id += (char)Read();
+            if (!id.StartsWith("GIF")) {
                 status = STATUS_FORMAT_ERROR;
                 return;
             }
 
             ReadLSD();
-            if (gctFlag && !Error())
-            {
+            if (gctFlag && !Error()) {
                 gct = ReadColorTable(gctSize);
                 bgColor = gct[bgIndex];
             }
@@ -749,27 +661,21 @@ namespace MSIT.NGif
             // 4-5 - reserved
             lctSize = 2 << (packed & 7); // 6-8 - local color table size
 
-            if (lctFlag)
-            {
+            if (lctFlag) {
                 lct = ReadColorTable(lctSize); // read table
                 act = lct; // make local table active
-            }
-            else
-            {
+            } else {
                 act = gct; // make global table active
                 if (bgIndex == transIndex) bgColor = 0;
             }
             int save = 0;
-            if (transparency)
-            {
+            if (transparency) {
                 save = act[transIndex];
                 act[transIndex] = 0; // set transparent color if specified
             }
 
             if (act == null)
-            {
                 status = STATUS_FORMAT_ERROR; // no color table defined
-            }
 
             if (Error()) return;
 
@@ -791,9 +697,7 @@ namespace MSIT.NGif
             frames.Add(new GifFrame(bitmap, delay)); // add image to frame list
 
             if (transparency)
-            {
                 act[transIndex] = save;
-            }
             ResetFrame();
         }
 
@@ -824,11 +728,9 @@ namespace MSIT.NGif
 
         protected void ReadNetscapeExt()
         {
-            do
-            {
+            do {
                 ReadBlock();
-                if (block[0] == 1)
-                {
+                if (block[0] == 1) {
                     // loop count sub-block
                     int b1 = (block[1]) & 0xff;
                     int b2 = (block[2]) & 0xff;
@@ -870,8 +772,7 @@ namespace MSIT.NGif
 
         protected void Skip()
         {
-            do
-            {
+            do {
                 ReadBlock();
             } while ((blockSize > 0) && !Error());
         }

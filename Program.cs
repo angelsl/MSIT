@@ -17,10 +17,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
-using MSIT.WzLib;
-using MSIT.WzLib.WzProperties;
 using Mono.Options;
+using reWZ;
+using reWZ.WZProperties;
 
 namespace MSIT
 {
@@ -34,29 +33,27 @@ namespace MSIT
             string aWzInPath = null;
             bool aWzNamesEnc = true;
             bool aPngOutput = false;
-            WzMapleVersion aWzVer = (WzMapleVersion) int.MinValue;
+            WZVariant aWzVer = (WZVariant)int.MinValue;
             string aOutputPath = null;
             Color aBgColor = Color.Black;
             int aPadding = 10;
             // input, input-wzfile, input-wzpath, input-wzver, output, output-path, background-color, padding
             OptionSet set = new OptionSet();
             set.Add("iwzp=|input-wzpath=", "The path of the animation or image. Required", s => aWzInPath = s);
-            set.Add("iwzv=|input-wzver=", "The WZ key to use when decoding the WZ. Required", s => aWzVer = (WzMapleVersion) Enum.Parse(typeof (WzMapleVersion), s));
+            set.Add("iwzv=|input-wzver=", "The WZ key to use when decoding the WZ. Required", s => aWzVer = (WZVariant)Enum.Parse(typeof(WZVariant), s));
             set.Add("iwzne|input-wz-names-not-encrypted", "Flag if WZ image names are not encrypted. ", s => aWzNamesEnc = false);
-            set.Add("o=|output=", "The method of output: (a)png or gif", s =>
-                                                                             {
-                                                                                 switch (s.ToLower())
-                                                                                 {
-                                                                                     case "png":
-                                                                                         aPngOutput = true;
-                                                                                         break;
-                                                                                     case "gif":
-                                                                                         aPngOutput = false;
-                                                                                         break;
-                                                                                     default:
-                                                                                         throw new ArgumentException("output must be either png or gif");
-                                                                                 }
-                                                                             });
+            set.Add("o=|output=", "The method of output: (a)png or gif", s => {
+                                                                             switch (s.ToLower()) {
+                                                                                 case "png":
+                                                                                     aPngOutput = true;
+                                                                                     break;
+                                                                                 case "gif":
+                                                                                     aPngOutput = false;
+                                                                                     break;
+                                                                                 default:
+                                                                                     throw new ArgumentException("output must be either png or gif");
+                                                                             }
+                                                                         });
             set.Add("op=|output-path=", "The path to write the output, (A)PNG or GIF, to", s => aOutputPath = s);
             set.Add("abg=|a-background-color=", "The background color of the animated output. Default is black. Ignored if /animated is not set.", s => aBgColor = Color.FromArgb(int.Parse(s)));
             set.Add("ap=|a-padding=", "The amount of padding in pixels to pad the animated output with. Default is 10. Ignored if /animated is not set.", s => aPadding = int.Parse(s));
@@ -67,9 +64,8 @@ namespace MSIT
 
             #region check params
 
-            printHelp |= aWzInPath == null || aWzVer == (WzMapleVersion) int.MinValue || aOutputPath == null;
-            if (printHelp)
-            {
+            printHelp |= aWzInPath == null || aWzVer == (WZVariant)int.MinValue || aOutputPath == null;
+            if (printHelp) {
                 PrintHelp(set);
                 return;
             }
@@ -78,38 +74,32 @@ namespace MSIT
 
             string[] wzpaths = aWzInPath.Split('*');
             List<List<Frame>> framess = new List<List<Frame>>();
-            foreach (string wzpath in wzpaths)
-            {
+            foreach (string wzpath in wzpaths) {
                 string[] split = wzpath.Split('?');
                 string path = split[0];
                 string inPath = split[1];
 
                 #region wz parsing
 
-                WzFile wz = new WzFile(path, aWzVer, aWzNamesEnc);
-                wz.ParseWzFile();
+                WZFile wz = new WZFile(path, aWzVer, aWzNamesEnc);
 
                 #endregion
 
                 #region getting single image
 
-                WzCanvasProperty wzcp = wz.GetWzObjectFromPath(inPath) as WzCanvasProperty;
-                if (wzcp != null)
-                {
-                    Bitmap b = wzcp.PngProperty.GetPng(false);
+                WZCanvasProperty wzcp = wz.ResolvePath(inPath) as WZCanvasProperty;
+                if (wzcp != null) {
+                    Bitmap b = wzcp.Value;
                     b.Save(aOutputPath, aPngOutput ? ImageFormat.Png : ImageFormat.Gif);
                     return;
                 }
 
                 #endregion
 
-                try
-                {
+                try {
                     List<Frame> data = InputMethods.InputWz(wz, inPath);
                     if (data.Count > 0) framess.Add(data);
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     Console.WriteLine("An error occured while retrieving frames. Check your arguments.");
                     Console.WriteLine(e);
                     throw;

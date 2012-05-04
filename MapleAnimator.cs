@@ -57,48 +57,40 @@ namespace MSIT
         {
             if (framess.Count() == 1) return framess.First();
             List<Frame> merged = new List<Frame>();
-            List<List<Frame>.Enumerator> ers = framess.Select(x => x.GetEnumerator()).Select(x =>
-                                                                                                 {
-                                                                                                     x.MoveNext();
-                                                                                                     return x;
-                                                                                                 }).ToList();
+            List<List<Frame>.Enumerator> ers = framess.Select(x => x.GetEnumerator()).Select(x => {
+                                                                                                 x.MoveNext();
+                                                                                                 return x;
+                                                                                             }).ToList();
             int no = 0;
-            while (ers.Count > 0)
-            {
+            while (ers.Count > 0) {
                 int mindelay = ers.Min(x => x.Current.Delay);
                 foreach (List<Frame>.Enumerator e in ers)
-                {
                     e.Current.Delay -= mindelay;
-                }
                 Bitmap b = new Bitmap(fs.Width, fs.Height);
                 Graphics g = Graphics.FromImage(b);
                 g.FillRectangle(new SolidBrush(bg), 0, 0, b.Width, b.Height);
                 foreach (List<Frame>.Enumerator e in ers)
-                {
                     g.DrawImage(e.Current.Image, e.Current.Offset);
-                }
                 g.Flush(FlushIntention.Sync);
                 merged.Add(new Frame(no++, b, new Point(0, 0), mindelay));
-                ers = ers.Where(e => e.Current.Delay > 0 || e.MoveNext()).Select(e =>
-                                                                                     {
-                                                                                         if (e.Current.Delay <= 0) e.MoveNext();
-                                                                                         return e;
-                                                                                     }).ToList();
+                ers = ers.Where(e => e.Current.Delay > 0 || e.MoveNext()).Select(e => {
+                                                                                     if (e.Current.Delay <= 0) e.MoveNext();
+                                                                                     return e;
+                                                                                 }).ToList();
             }
             return merged;
         }
 
         private static IEnumerable<Frame> FinalProcess(List<Frame> frame, Size fs, Color bg)
         {
-            return frame.Select(n =>
-                                    {
-                                        Bitmap b = new Bitmap(fs.Width, fs.Height);
-                                        Graphics g = Graphics.FromImage(b);
-                                        g.FillRectangle(new SolidBrush(bg), 0, 0, b.Width, b.Height);
-                                        g.DrawImage(n.Image, n.Offset);
-                                        g.Flush(FlushIntention.Sync);
-                                        return new Frame(n.Number, b, new Point(0, 0), n.Delay);
-                                    });
+            return frame.Select(n => {
+                                    Bitmap b = new Bitmap(fs.Width, fs.Height);
+                                    Graphics g = Graphics.FromImage(b);
+                                    g.FillRectangle(new SolidBrush(bg), 0, 0, b.Width, b.Height);
+                                    g.DrawImage(n.Image, n.Offset);
+                                    g.Flush(FlushIntention.Sync);
+                                    return new Frame(n.Number, b, new Point(0, 0), n.Delay);
+                                });
         }
     }
 }

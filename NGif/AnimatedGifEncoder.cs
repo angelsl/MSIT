@@ -96,7 +96,7 @@ namespace MSIT.NGif
 
         public void SetDelay(int ms)
         {
-            delay = (int) Math.Round(ms/10.0f);
+            delay = (int)Math.Round(ms/10.0f);
         }
 
         /**
@@ -109,9 +109,7 @@ namespace MSIT.NGif
         public void SetDispose(int code)
         {
             if (code >= 0)
-            {
                 dispose = code;
-            }
         }
 
         /**
@@ -127,9 +125,7 @@ namespace MSIT.NGif
         public void SetRepeat(int iter)
         {
             if (iter >= 0)
-            {
                 repeat = iter;
-            }
         }
 
         /**
@@ -163,41 +159,29 @@ namespace MSIT.NGif
         public bool AddFrame(Image im)
         {
             if ((im == null) || !started)
-            {
                 return false;
-            }
             bool ok = true;
-            try
-            {
+            try {
                 if (!sizeSet)
-                {
                     // use first frame's size
                     SetSize(im.Width, im.Height);
-                }
                 image = im;
                 GetImagePixels(); // convert to correct format if necessary
                 AnalyzePixels(); // build color table & map pixels
-                if (firstFrame)
-                {
+                if (firstFrame) {
                     WriteLSD(); // logical screen descriptior
                     WritePalette(); // global color table
                     if (repeat >= 0)
-                    {
                         // use NS app extension to indicate reps
                         WriteNetscapeExt();
-                    }
                 }
                 WriteGraphicCtrlExt(); // write graphic control extension
                 WriteImageDesc(); // image descriptor
                 if (!firstFrame)
-                {
                     WritePalette(); // local color table
-                }
                 WritePixels(); // encode and write pixel data
                 firstFrame = false;
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 ok = false;
             }
 
@@ -215,17 +199,12 @@ namespace MSIT.NGif
             if (!started) return false;
             bool ok = true;
             started = false;
-            try
-            {
+            try {
                 fs.WriteByte(0x3b); // gif trailer
                 fs.Flush();
                 if (closeStream)
-                {
                     fs.Close();
-                }
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 ok = false;
             }
 
@@ -252,9 +231,7 @@ namespace MSIT.NGif
         public void SetFrameRate(float fps)
         {
             if (fps != 0f)
-            {
-                delay = (int) Math.Round(100f/fps);
-            }
+                delay = (int)Math.Round(100f/fps);
         }
 
         /**
@@ -308,12 +285,9 @@ namespace MSIT.NGif
             bool ok = true;
             closeStream = false;
             fs = os;
-            try
-            {
+            try {
                 WriteString("GIF89a"); // header
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 ok = false;
             }
             return started = ok;
@@ -329,15 +303,12 @@ namespace MSIT.NGif
         public bool Start(String file)
         {
             bool ok = true;
-            try
-            {
+            try {
                 //			bw = new BinaryWriter( new FileStream( file, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None ) );
                 fs = new FileStream(file, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
                 ok = Start(fs);
                 closeStream = true;
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 ok = false;
             }
             return started = ok;
@@ -365,20 +336,17 @@ namespace MSIT.NGif
 //			}
             // map image pixels to new palette
             int k = 0;
-            for (int i = 0; i < nPix; i++)
-            {
+            for (int i = 0; i < nPix; i++) {
                 int index = nq.Map(pixels[k++] & 0xff, pixels[k++] & 0xff, pixels[k++] & 0xff);
                 usedEntry[index] = true;
-                indexedPixels[i] = (byte) index;
+                indexedPixels[i] = (byte)index;
             }
             pixels = null;
             colorDepth = 8;
             palSize = 7;
             // get closest match to transparent color if specified
             if (transparent != Color.Empty)
-            {
                 transIndex = FindClosest(transparent);
-            }
         }
 
         /**
@@ -395,15 +363,13 @@ namespace MSIT.NGif
             int minpos = 0;
             int dmin = 256*256*256;
             int len = colorTab.Length;
-            for (int i = 0; i < len;)
-            {
+            for (int i = 0; i < len;) {
                 int dr = r - (colorTab[i++] & 0xff);
                 int dg = g - (colorTab[i++] & 0xff);
                 int db = b - (colorTab[i] & 0xff);
                 int d = dr*dr + dg*dg + db*db;
                 int index = i/3;
-                if (usedEntry[index] && (d < dmin))
-                {
+                if (usedEntry[index] && (d < dmin)) {
                     dmin = d;
                     minpos = index;
                 }
@@ -421,8 +387,7 @@ namespace MSIT.NGif
             int w = image.Width;
             int h = image.Height;
             //		int type = image.GetType().;
-            if ((w != width) || (h != height))
-            {
+            if ((w != width) || (h != height)) {
                 // create new image with right size/format
                 Image temp = new Bitmap(width, height);
                 Graphics g = Graphics.FromImage(temp);
@@ -438,9 +403,7 @@ namespace MSIT.NGif
             int count = 0;
             Bitmap tempBitmap = new Bitmap(image);
             for (int th = 0; th < image.Height; th++)
-            {
-                for (int tw = 0; tw < image.Width; tw++)
-                {
+                for (int tw = 0; tw < image.Width; tw++) {
                     Color color = tempBitmap.GetPixel(tw, th);
                     pixels[count] = color.R;
                     count++;
@@ -449,7 +412,6 @@ namespace MSIT.NGif
                     pixels[count] = color.B;
                     count++;
                 }
-            }
 
             //		pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
         }
@@ -464,20 +426,15 @@ namespace MSIT.NGif
             fs.WriteByte(0xf9); // GCE label
             fs.WriteByte(4); // data block size
             int transp, disp;
-            if (transparent == Color.Empty)
-            {
+            if (transparent == Color.Empty) {
                 transp = 0;
                 disp = 0; // dispose = no action
-            }
-            else
-            {
+            } else {
                 transp = 1;
                 disp = 2; // force clear if using transparent color
             }
             if (dispose >= 0)
-            {
                 disp = dispose & 7; // user override
-            }
             disp <<= 2;
 
             // packed fields
@@ -504,19 +461,15 @@ namespace MSIT.NGif
             WriteShort(height);
             // packed fields
             if (firstFrame)
-            {
                 // no LCT  - GCT is used for first (or only) frame
                 fs.WriteByte(0);
-            }
             else
-            {
                 // specify normal LCT
                 fs.WriteByte(Convert.ToByte(0x80 | // 1 local color table  1=yes
                                             0 | // 2 interlace - 0=no
                                             0 | // 3 sorted - 0=no
                                             0 | // 4-5 reserved
                                             palSize)); // 6-8 size of color table
-            }
         }
 
         /**
@@ -564,9 +517,7 @@ namespace MSIT.NGif
             fs.Write(colorTab, 0, colorTab.Length);
             int n = (3*256) - colorTab.Length;
             for (int i = 0; i < n; i++)
-            {
                 fs.WriteByte(0);
-            }
         }
 
         /**
@@ -597,9 +548,7 @@ namespace MSIT.NGif
         {
             char[] chars = s.ToCharArray();
             for (int i = 0; i < chars.Length; i++)
-            {
-                fs.WriteByte((byte) chars[i]);
-            }
+                fs.WriteByte((byte)chars[i]);
         }
     }
 }

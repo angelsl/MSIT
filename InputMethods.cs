@@ -16,26 +16,25 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MSIT.WzLib;
-using MSIT.WzLib.WzProperties;
+using reWZ;
+using reWZ.WZProperties;
 
 namespace MSIT
 {
-    internal class InputMethods
+    internal static class InputMethods
     {
-        public static List<Frame> InputWz(WzFile wz, string inpath)
+        public static List<Frame> InputWz(WZFile wz, string inpath)
         {
-            IWzObject iwahz = wz.GetWzObjectFromPath(inpath);
-            WzSubProperty iwah = iwahz as WzSubProperty;
+            WZObject iwahz = wz.ResolvePath(inpath);
+            WZSubProperty iwah = iwahz as WZSubProperty;
             if (iwah == null) throw new ArgumentException("The path provided did not lead to an animation; check input-wzfile, input-wzpath and input-wzver");
             List<Frame> r = new List<Frame>();
-            foreach (IWzImageProperty iwzo in iwah.WzProperties)
-            {
-                WzCanvasProperty iwc = (iwzo is WzUOLProperty ? ((WzUOLProperty) iwzo).Resolve() : iwzo) as WzCanvasProperty;
+            foreach (WZObject iwzo in iwah) {
+                WZCanvasProperty iwc = (iwzo is WZUOLProperty ? ((WZUOLProperty)iwzo).ResolveFully() : iwzo) as WZCanvasProperty;
                 if (iwc == null) continue;
                 int n;
                 if (!int.TryParse(iwzo.Name, out n)) continue;
-                r.Add(new Frame(n, iwc.PngProperty.GetPng(false), ((WzVectorProperty) iwc.GetProperty("origin")).Pos, iwc.GetProperty("delay") != null ? iwc.GetProperty("delay").ToInt() : 100));
+                r.Add(new Frame(n, iwc.Value, ((WZVectorProperty)iwc["origin"]).Value, iwc.ContainsKey("delay") ? iwc["delay"].ToInt() : 100));
             }
             return r.OrderBy(f => f.Number).ToList();
         }
@@ -43,29 +42,14 @@ namespace MSIT
 
     internal static class WzUtilities
     {
-        public static IWzObject GetWzObjectFromPath(this WzFile wz, string path)
-        {
-            return wz.GetObjectFromPath(wz.WzDirectory.Name + "/" + path);
-        }
 
-        public static IWzObject Resolve(this WzUOLProperty uol)
+        public static int ToInt(this WZObject izo)
         {
-            IWzObject ret = uol.LinkValue;
-            while (ret is WzUOLProperty) ret = ((WzUOLProperty) ret).LinkValue;
-            return ret;
-        }
-
-        public static int ToInt(this IWzObject izo)
-        {
-            if (izo is WzCompressedIntProperty)
-            {
-                return ((WzCompressedIntProperty) izo).Value;
-            }
-            else if (izo is WzStringProperty)
-            {
-                return int.Parse(((WzStringProperty) izo).Value);
-            }
-            else throw new InvalidOperationException(String.Format("Cannot convert {0} to integer.", izo.GetType().Name));
+            WZInt32Property wzInt32Property = izo as WZInt32Property;
+            if (wzInt32Property != null) return (wzInt32Property).Value;
+            WZStringProperty wzStringProperty = izo as WZStringProperty;
+            if (wzStringProperty != null) return int.Parse((wzStringProperty).Value);
+            throw new FormatException(String.Format("Cannot convert {0} to integer; is not an integer.", izo.GetType().Name));
         }
     }
 }

@@ -30,8 +30,7 @@ namespace MSIT
             gif.SetQuality(4);
             gif.SetRepeat(0);
             gif.Start(fn);
-            foreach (Frame f in frames)
-            {
+            foreach (Frame f in frames) {
                 gif.SetDelay(f.Delay);
                 gif.AddFrame(f.Image);
             }
@@ -43,9 +42,7 @@ namespace MSIT
             frames = frames.OrderBy(f => f.Number);
             Apng apng = new Apng();
             foreach (Frame f in frames)
-            {
                 apng.AddFrame(f.Image, f.Delay, 1000);
-            }
             apng.WriteApng(fn, false, true);
         }
     }

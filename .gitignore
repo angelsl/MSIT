@@ -6,3 +6,8 @@
 *.pfx
 *.suo
 *.sln
+/_ReSharper.MSIT
+*.testsettings
+*.dotCover
+*.user
+*.vsmdi

@@ -119,8 +119,7 @@ namespace MSIT.NGif
 		   ----------------------------------------------------------------------- */
 
         public NeuQuant(byte[] thepic, int len) : this(thepic, len, 10)
-        {
-        }
+        {}
 
         public NeuQuant(byte[] thepic, int len, int sample)
         {
@@ -132,8 +131,7 @@ namespace MSIT.NGif
             samplefac = sample;
 
             network = new int[netsize][];
-            for (i = 0; i < netsize; i++)
-            {
+            for (i = 0; i < netsize; i++) {
                 network[i] = new int[4];
                 p = network[i];
                 p[0] = p[1] = p[2] = (i << (netbiasshift + 8))/netsize;
@@ -148,12 +146,11 @@ namespace MSIT.NGif
             int[] index = new int[netsize];
             for (int i = 0; i < netsize; i++) index[network[i][3]] = i;
             int k = 0;
-            for (int i = 0; i < netsize; i++)
-            {
+            for (int i = 0; i < netsize; i++) {
                 int j = index[i];
-                map[k++] = (byte) (network[j][0]);
-                map[k++] = (byte) (network[j][1]);
-                map[k++] = (byte) (network[j][2]);
+                map[k++] = (byte)(network[j][0]);
+                map[k++] = (byte)(network[j][1]);
+                map[k++] = (byte)(network[j][2]);
             }
             return map;
         }
@@ -170,17 +167,14 @@ namespace MSIT.NGif
 
             previouscol = 0;
             startpos = 0;
-            for (i = 0; i < netsize; i++)
-            {
+            for (i = 0; i < netsize; i++) {
                 p = network[i];
                 smallpos = i;
                 smallval = p[1]; /* index on g */
                 /* find smallest in i..netsize-1 */
-                for (j = i + 1; j < netsize; j++)
-                {
+                for (j = i + 1; j < netsize; j++) {
                     q = network[j];
-                    if (q[1] < smallval)
-                    {
+                    if (q[1] < smallval) {
                         /* index on g */
                         smallpos = j;
                         smallval = q[1]; /* index on g */
@@ -188,8 +182,7 @@ namespace MSIT.NGif
                 }
                 q = network[smallpos];
                 /* swap p (i) and q (smallpos) entries */
-                if (i != smallpos)
-                {
+                if (i != smallpos) {
                     j = q[0];
                     q[0] = p[0];
                     p[0] = j;
@@ -204,8 +197,7 @@ namespace MSIT.NGif
                     p[3] = j;
                 }
                 /* smallval entry is now in position i */
-                if (smallval != previouscol)
-                {
+                if (smallval != previouscol) {
                     netindex[previouscol] = (startpos + i) >> 1;
                     for (j = previouscol + 1; j < smallval; j++) netindex[j] = i;
                     previouscol = smallval;
@@ -244,19 +236,12 @@ namespace MSIT.NGif
 
             if (lengthcount < minpicturebytes) step = 3;
             else if ((lengthcount%prime1) != 0) step = 3*prime1;
-            else
-            {
-                if ((lengthcount%prime2) != 0) step = 3*prime2;
-                else
-                {
-                    if ((lengthcount%prime3) != 0) step = 3*prime3;
-                    else step = 3*prime4;
-                }
-            }
+            else if ((lengthcount%prime2) != 0) step = 3*prime2;
+            else if ((lengthcount%prime3) != 0) step = 3*prime3;
+            else step = 3*prime4;
 
             i = 0;
-            while (i < samplepixels)
-            {
+            while (i < samplepixels) {
                 b = (p[pix + 0] & 0xff) << netbiasshift;
                 g = (p[pix + 1] & 0xff) << netbiasshift;
                 r = (p[pix + 2] & 0xff) << netbiasshift;
@@ -270,8 +255,7 @@ namespace MSIT.NGif
 
                 i++;
                 if (delta == 0) delta = 1;
-                if (i%delta == 0)
-                {
+                if (i%delta == 0) {
                     alpha -= alpha/alphadec;
                     radius -= radius/radiusdec;
                     rad = radius >> radiusbiasshift;
@@ -296,52 +280,43 @@ namespace MSIT.NGif
             i = netindex[g]; /* index on g */
             j = i - 1; /* start at netindex[g] and work outwards */
 
-            while ((i < netsize) || (j >= 0))
-            {
-                if (i < netsize)
-                {
+            while ((i < netsize) || (j >= 0)) {
+                if (i < netsize) {
                     p = network[i];
                     dist = p[1] - g; /* inx key */
                     if (dist >= bestd) i = netsize; /* stop iter */
-                    else
-                    {
+                    else {
                         i++;
                         if (dist < 0) dist = -dist;
                         a = p[0] - b;
                         if (a < 0) a = -a;
                         dist += a;
-                        if (dist < bestd)
-                        {
+                        if (dist < bestd) {
                             a = p[2] - r;
                             if (a < 0) a = -a;
                             dist += a;
-                            if (dist < bestd)
-                            {
+                            if (dist < bestd) {
                                 bestd = dist;
                                 best = p[3];
                             }
                         }
                     }
                 }
-                if (j >= 0)
-                {
+                if (j >= 0) {
                     p = network[j];
                     dist = g - p[1]; /* inx key - reverse dif */
                     if (dist >= bestd) j = -1; /* stop iter */
-                    else
-                    {
+                    else {
                         j--;
                         if (dist < 0) dist = -dist;
                         a = p[0] - b;
                         if (a < 0) a = -a;
                         dist += a;
-                        if (dist < bestd)
-                        {
+                        if (dist < bestd) {
                             a = p[2] - r;
                             if (a < 0) a = -a;
                             dist += a;
-                            if (dist < bestd)
-                            {
+                            if (dist < bestd) {
                                 bestd = dist;
                                 best = p[3];
                             }
@@ -367,8 +342,7 @@ namespace MSIT.NGif
         {
             int i, j;
 
-            for (i = 0; i < netsize; i++)
-            {
+            for (i = 0; i < netsize; i++) {
                 network[i][0] >>= netbiasshift;
                 network[i][1] >>= netbiasshift;
                 network[i][2] >>= netbiasshift;
@@ -392,34 +366,23 @@ namespace MSIT.NGif
             j = i + 1;
             k = i - 1;
             m = 1;
-            while ((j < hi) || (k > lo))
-            {
+            while ((j < hi) || (k > lo)) {
                 a = radpower[m++];
-                if (j < hi)
-                {
+                if (j < hi) {
                     p = network[j++];
-                    try
-                    {
+                    try {
                         p[0] -= (a*(p[0] - b))/alpharadbias;
                         p[1] -= (a*(p[1] - g))/alpharadbias;
                         p[2] -= (a*(p[2] - r))/alpharadbias;
-                    }
-                    catch (Exception e)
-                    {
-                    } // prevents 1.3 miscompilation
+                    } catch (Exception e) {} // prevents 1.3 miscompilation
                 }
-                if (k > lo)
-                {
+                if (k > lo) {
                     p = network[k--];
-                    try
-                    {
+                    try {
                         p[0] -= (a*(p[0] - b))/alpharadbias;
                         p[1] -= (a*(p[1] - g))/alpharadbias;
                         p[2] -= (a*(p[2] - r))/alpharadbias;
-                    }
-                    catch (Exception e)
-                    {
-                    }
+                    } catch (Exception e) {}
                 }
             }
         }
@@ -455,8 +418,7 @@ namespace MSIT.NGif
             bestpos = -1;
             bestbiaspos = bestpos;
 
-            for (i = 0; i < netsize; i++)
-            {
+            for (i = 0; i < netsize; i++) {
                 n = network[i];
                 dist = n[0] - b;
                 if (dist < 0) dist = -dist;
@@ -466,14 +428,12 @@ namespace MSIT.NGif
                 a = n[2] - r;
                 if (a < 0) a = -a;
                 dist += a;
-                if (dist < bestd)
-                {
+                if (dist < bestd) {
                     bestd = dist;
                     bestpos = i;
                 }
                 biasdist = dist - ((bias[i]) >> (intbiasshift - netbiasshift));
-                if (biasdist < bestbiasd)
-                {
+                if (biasdist < bestbiasd) {
                     bestbiasd = biasdist;
                     bestbiaspos = i;
                 }
