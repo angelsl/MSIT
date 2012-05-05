@@ -34,7 +34,7 @@ namespace MSIT
                 if (iwc == null) continue;
                 int n;
                 if (!int.TryParse(iwzo.Name, out n)) continue;
-                r.Add(new Frame(n, iwc.Value, ((WZVectorProperty)iwc["origin"]).Value, iwc.ContainsKey("delay") ? iwc["delay"].ToInt() : 100));
+                r.Add(new Frame(n, iwc.Value, ((WZPointProperty)iwc["origin"]).Value, iwc.ContainsKey("delay") ? iwc["delay"].ToInt() : 100));
             }
             return r.OrderBy(f => f.Number).ToList();
         }

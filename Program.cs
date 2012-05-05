@@ -107,8 +107,13 @@ namespace MSIT
                 wz.Dispose();
             }
             IEnumerable<Frame> final = OffsetAnimator.Process(new Rectangle(aPadding, aPadding, aPadding, aPadding), aBgColor, framess.ToArray());
-            if (aPngOutput) OutputMethods.OutputPNG(final, aOutputPath);
-            else OutputMethods.OutputGIF(final, aOutputPath);
+#if APNG
+            if (aPngOutput) OutputMethods.OutputAPNG(final, aOutputPath);
+            else 
+#else
+            Console.WriteLine("APNG output not supported in this version; outputting GIF.");
+#endif
+            OutputMethods.OutputGIF(final, aOutputPath);
         }
 
         private static void PrintHelp(OptionSet set)

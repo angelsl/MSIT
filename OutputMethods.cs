@@ -36,8 +36,8 @@ namespace MSIT
             }
             gif.Finish();
         }
-
-        public static void OutputPNG(IEnumerable<Frame> frames, String fn)
+#if APNG
+        public static void OutputAPNG(IEnumerable<Frame> frames, String fn)
         {
             frames = frames.OrderBy(f => f.Number);
             Apng apng = new Apng();
@@ -45,5 +45,6 @@ namespace MSIT
                 apng.AddFrame(f.Image, f.Delay, 1000);
             apng.WriteApng(fn, false, true);
         }
+#endif
     }
 }
