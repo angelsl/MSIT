@@ -10,9 +10,9 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/gpl.htm
 
 ### Example
 
-Animation: `MSIT /iwzp:D:\MapleStory\Effect.wz?BasicEff.img/LevelUp /iwzv:BMS /o:png /op:LevelUp.png`  
-Multiple animation: `MSIT /iwzp:D:\Misc\Applications\MSWZ\Mob.wz?8510000.img/attack3*D:\Misc\Applications\MSWZ\Mob.wz?8510000.img/attack3/info/effect /iwzv:BMS /o:png /op:PianusBeam.png`  
-Single image: `MSIT /iwzp:D:\MapleStory\Effect.wz?BasicEff.img/LevelUp/0 /iwzv:BMS /o:png /op:LevelUp.png`
+Animation: `MSIT /iwzp:D:\...\Effect.wz?BasicEff.img/LevelUp /iwzv:BMS /o:png /op:LevelUp.png`  
+Multiple animation: `MSIT /iwzp:D:\...\Mob.wz?8510000.img/attack3*D:\...\Mob.wz?8510000.img/attack3/info/effect /iwzv:BMS /o:png /op:PianusBeam.png`  
+Single image: `MSIT /iwzp:D:\...\Effect.wz?BasicEff.img/LevelUp/8 /iwzv:BMS /o:png /op:LevelUp8.png`
 
 For more information, see `MSIT /?`.
 
@@ -26,10 +26,9 @@ For more information, see `MSIT /?`.
 
 ## Libraries & Credits
 
-* [GifComponents & CommonForms](http://sourceforge.net/projects/gifcomponents/)
+* [NGif](http://www.codeproject.com/Articles/11505/NGif-Animated-GIF-Encoder-for-NET)
 * [libpng](http://www.libpng.org/pub/png/libpng.html) 1.5.1 w/ [apng patch](http://littlesvr.ca/apng/)
 * [SharpApng](http://code.google.com/p/sharpapng/)
-* [MapleLib 2](http://code.google.com/p/maplelib2/)
 * [Mono.Options](https://github.com/mono/mono/blob/master/mcs/class/Mono.Options/Mono.Options/Options.cs)
 
 Algorithm taken from [HaRepacker](http://community.kryptodev.com/thread-release-hasuite-harepacker-and-hacreator).
