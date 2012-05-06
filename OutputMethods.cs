@@ -17,12 +17,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MSIT.NGif;
+#if APNG
 using SharpApng;
 using X = SharpApng;
+#endif
 
 namespace MSIT
 {
-    internal class OutputMethods
+    internal static class OutputMethods
     {
         public static void OutputGIF(IEnumerable<Frame> frames, String fn)
         {

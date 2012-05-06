@@ -15,6 +15,7 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 
 #region .NET Disclaimer/Info
@@ -382,7 +383,7 @@ namespace MSIT.NGif
 		 * Extracts image pixels into byte array "pixels"
 		 */
 
-        protected void GetImagePixels()
+        private unsafe void GetImagePixels()
         {
             int w = image.Width;
             int h = image.Height;
@@ -395,25 +396,25 @@ namespace MSIT.NGif
                 image = temp;
                 g.Dispose();
             }
-            /*
-				ToDo:
-				improve performance: use unsafe code 
-			*/
-            pixels = new Byte[3*image.Width*image.Height];
-            int count = 0;
-            Bitmap tempBitmap = new Bitmap(image);
-            for (int th = 0; th < image.Height; th++)
-                for (int tw = 0; tw < image.Width; tw++) {
-                    Color color = tempBitmap.GetPixel(tw, th);
-                    pixels[count] = color.R;
-                    count++;
-                    pixels[count] = color.G;
-                    count++;
-                    pixels[count] = color.B;
-                    count++;
-                }
+            w = image.Width;
+            h = image.Height;
 
-            //		pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+            Bitmap tempBitmap = new Bitmap(image);
+            BitmapData bd = tempBitmap.LockBits(new Rectangle(0, 0, w, h), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+            byte* p = (byte*)bd.Scan0;
+            pixels = new Byte[3 * w * h];
+            for (int y = 0; y < h; y++)
+            {
+                for (int x = 0; x < w; x++)
+                {
+                    pixels[(y * w + x) * 3] = p[x * 3];
+                    pixels[(y * w + x) * 3 + 1] = p[x * 3 + 1];
+                    pixels[(y * w + x) * 3 + 2] = p[x * 3 + 2];
+                }
+                p += bd.Stride;
+            }
+            tempBitmap.UnlockBits(bd);
+            tempBitmap.Dispose();
         }
 
         /**
