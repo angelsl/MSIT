@@ -74,10 +74,15 @@ namespace MSIT
 
             string[] wzpaths = aWzInPath.Split('*');
             List<List<Frame>> framess = new List<List<Frame>>();
+            string path = null;
             foreach (string wzpath in wzpaths) {
                 string[] split = wzpath.Split('?');
-                string path = split[0];
-                string inPath = split[1];
+                string inPath;
+                if (path != null && split.Length == 1) inPath = split[0];
+                else {
+                    path = split[0];
+                    inPath = split[1];
+                }
 
                 #region wz parsing
 
@@ -107,14 +112,14 @@ namespace MSIT
                 wz.Dispose();
             }
             IEnumerable<Frame> final = OffsetAnimator.Process(new Rectangle(aPadding, aPadding, aPadding, aPadding), aBgColor, framess.ToArray());
-            if(aPngOutput)
+            if (aPngOutput)
 #if APNG
-            OutputMethods.OutputAPNG(final, aOutputPath);
+                OutputMethods.OutputAPNG(final, aOutputPath);
             else 
 #else
             Console.WriteLine("APNG output not supported in this version; outputting GIF.");
 #endif
-            OutputMethods.OutputGIF(final, aOutputPath);
+                OutputMethods.OutputGIF(final, aOutputPath);
         }
 
         private static void PrintHelp(OptionSet set)
