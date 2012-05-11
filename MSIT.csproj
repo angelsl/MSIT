@@ -143,14 +143,11 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>ilmerge /v2 /out:MSIT_.exe MSIT.exe reWZ.dll DotZLib.dll
+    <PostBuildEvent>ilmerge /v2 /out:MSIT_.exe MSIT.exe reWZ.dll
 rmdir /S /Q MSIT
 mkdir MSIT
 copy /V MSIT_.exe /B MSIT\MSIT.exe
-copy /V zlib1.dll /B MSIT\
 if NOT $(ConfigurationName) == ReleaseNoAPNG (
- copy /V apng.dll /B MSIT\
- copy /V libpng15.dll /B MSIT\
  cd MSIT
  7z a -tzip MSIT_APNG.zip *
 copy /V MSIT_APNG.zip /B ..\..\
