@@ -17,10 +17,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MSIT.NGif;
-#if APNG
-using SharpApng;
-using X = SharpApng;
-#endif
 
 namespace MSIT
 {
@@ -28,6 +24,7 @@ namespace MSIT
     {
         public static void OutputGIF(IEnumerable<Frame> frames, String fn)
         {
+            frames = frames.OrderBy(f => f.Number);
             AnimatedGifEncoder gif = new AnimatedGifEncoder();
             gif.SetQuality(4);
             gif.SetRepeat(0);
@@ -42,10 +39,6 @@ namespace MSIT
         public static void OutputAPNG(IEnumerable<Frame> frames, String fn)
         {
             frames = frames.OrderBy(f => f.Number);
-            Apng apng = new Apng();
-            foreach (Frame f in frames)
-                apng.AddFrame(f.Image, f.Delay, 1000);
-            apng.WriteApng(fn, false, true);
         }
 #endif
     }
