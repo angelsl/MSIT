@@ -114,6 +114,7 @@ namespace MSIT
                 wz.Dispose();
             }
             IEnumerable<Frame> final = OffsetAnimator.Process(new Rectangle(aPadding, aPadding, aPadding, aPadding), aBgColor, framess.ToArray());
+            framess.ForEach(f => f.ForEach(g => g.Image.Dispose()));
             if (aPngOutput)
 #if APNG
                 OutputMethods.OutputAPNG(final, aOutputPath);

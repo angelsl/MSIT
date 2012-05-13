@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using reWZ;
 using reWZ.WZProperties;
@@ -34,7 +35,8 @@ namespace MSIT
                 if (iwc == null) continue;
                 int n;
                 if (!int.TryParse(iwzo.Name, out n)) continue;
-                r.Add(new Frame(n, iwc.Value, ((WZPointProperty)iwc["origin"]).Value, iwc.HasChild("delay") ? iwc["delay"].ToInt() : 100));
+                r.Add(new Frame(n, new Bitmap(iwc.Value), ((WZPointProperty)iwc["origin"]).Value, iwc.HasChild("delay") ? Math.Max(iwc["delay"].ToInt(), 1) : 100));
+                iwc.Dispose();
             }
             return r.OrderBy(f => f.Number).ToList();
         }
@@ -42,7 +44,6 @@ namespace MSIT
 
     internal static class WzUtilities
     {
-
         public static int ToInt(this WZObject izo)
         {
             WZInt32Property wzInt32Property = izo as WZInt32Property;

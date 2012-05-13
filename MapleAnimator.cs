@@ -64,14 +64,13 @@ namespace MSIT
             int no = 0;
             while (ers.Count > 0) {
                 int mindelay = ers.Min(x => x.Current.Delay);
-                foreach (List<Frame>.Enumerator e in ers)
-                    e.Current.Delay -= mindelay;
+                ers.ForEach(f => f.Current.Delay -= mindelay);
                 Bitmap b = new Bitmap(fs.Width, fs.Height);
                 Graphics g = Graphics.FromImage(b);
                 g.FillRectangle(new SolidBrush(bg), 0, 0, b.Width, b.Height);
-                foreach (List<Frame>.Enumerator e in ers)
-                    g.DrawImage(e.Current.Image, e.Current.Offset);
+                ers.ForEach(f => g.DrawImage(f.Current.Image, f.Current.Offset));
                 g.Flush(FlushIntention.Sync);
+                g.Dispose();
                 merged.Add(new Frame(no++, b, new Point(0, 0), mindelay));
                 ers = ers.Where(e => e.Current.Delay > 0 || e.MoveNext()).Select(e => {
                                                                                      if (e.Current.Delay <= 0) e.MoveNext();
@@ -89,8 +88,9 @@ namespace MSIT
                                     g.FillRectangle(new SolidBrush(bg), 0, 0, b.Width, b.Height);
                                     g.DrawImage(n.Image, n.Offset);
                                     g.Flush(FlushIntention.Sync);
+                                    g.Dispose();            
                                     return new Frame(n.Number, b, new Point(0, 0), n.Delay);
-                                });
+                                }).ToList();
         }
     }
 }
