@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using MSIT.NGif;
 
@@ -52,11 +53,10 @@ namespace MSIT
         {
             f.Save(fn, ImageFormat.Png);
         }
-#if APNG
+
         public static void OutputAPNG(IEnumerable<Frame> frames, String fn)
         {
-            frames = frames.OrderBy(f => f.Number);
         }
-#endif
+
     }
 }

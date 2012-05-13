@@ -17,6 +17,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Text;
 
 #region .NET Disclaimer/Info
 
@@ -71,7 +72,6 @@ namespace MSIT.NGif
         private int _delay; // frame delay (hundredths)
         private int _dispose = -1; // disposal code (-1 = use default)
         private bool _firstFrame = true;
-        //	protected BinaryWriter bw;
         private FileStream _fs;
         private int _height;
 
@@ -97,7 +97,7 @@ namespace MSIT.NGif
 
         public void SetDelay(int ms)
         {
-            _delay = (int)Math.Round(ms/10.0f);
+            _delay = ms/10;
         }
 
         /**
@@ -223,19 +223,6 @@ namespace MSIT.NGif
         }
 
         /**
-		 * Sets frame rate in frames per second.  Equivalent to
-		 * <code>setDelay(1000/fps)</code>.
-		 *
-		 * @param fps float frame rate (frames per second)
-		 */
-
-        public void SetFrameRate(float fps)
-        {
-            if (fps != 0f)
-                _delay = (int)Math.Round(100f/fps);
-        }
-
-        /**
 		 * Sets quality of color quantization (conversion of images
 		 * to the maximum 256 colors allowed by the GIF specification).
 		 * Lower values (minimum = 1) produce better colors, but slow
@@ -326,14 +313,6 @@ namespace MSIT.NGif
             NeuQuant nq = new NeuQuant(_pixels, len, _sample);
             // initialize quantizer
             _colorTab = nq.Process(); // create reduced palette
-            // convert map from BGR to RGB
-//			for (int i = 0; i < colorTab.Length; i += 3) 
-//			{
-//				byte temp = colorTab[i];
-//				colorTab[i] = colorTab[i + 2];
-//				colorTab[i + 2] = temp;
-//				usedEntry[i / 3] = false;
-//			}
             // map image pixels to new palette
             int k = 0;
             for (int i = 0; i < nPix; i++) {
@@ -403,14 +382,12 @@ namespace MSIT.NGif
             int stridePad = bd.Stride - (3*w);
             fixed (byte* v = _pixels) {
                 byte* q = v;
-                for (int y = 0; y < h; y++) {
-                    for (int x = 0; x < w; x++) {
+                for (int y = 0; y < h; y++, p += stridePad) {
+                    for (int x = 0; x < w; x++, q += 3) {
                         *(q+2) = *(p++);
                         *(q+1) = *(p++);
                         *q = *(p++);
-                        q += 3;
                     }
-                    p += stridePad;
                 }
             }
             tempBitmap.UnlockBits(bd);
@@ -537,8 +514,8 @@ namespace MSIT.NGif
 
         private void WriteShort(int value)
         {
-            _fs.WriteByte(Convert.ToByte(value & 0xff));
-            _fs.WriteByte(Convert.ToByte((value >> 8) & 0xff));
+            _fs.WriteByte((byte)(value & 0xff));
+            _fs.WriteByte((byte)((value >> 8) & 0xff));
         }
 
         /**
@@ -547,9 +524,8 @@ namespace MSIT.NGif
 
         private void WriteString(String s)
         {
-            char[] chars = s.ToCharArray();
-            for (int i = 0; i < chars.Length; i++)
-                _fs.WriteByte((byte)chars[i]);
+            byte[] b = Encoding.ASCII.GetBytes(s);
+            _fs.Write(b, 0, b.Length);
         }
     }
 }

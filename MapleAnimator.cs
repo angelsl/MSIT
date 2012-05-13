@@ -26,14 +26,14 @@ namespace MSIT
         public static IEnumerable<Frame> Process(Rectangle padding, Color background, params List<Frame>[] zframess)
         {
             List<List<Frame>> framess = zframess.Select(aframess => aframess.Select(f => new Frame(f.Number, f.Image, new Point(-f.Offset.X, -f.Offset.Y), f.Delay)).ToList()).ToList();
-            framess = PadOffsets(NormaliseOffsets(framess), padding);
+            framess = PadOffsets(Translate(framess), padding);
             Size fs = GetFrameSize(framess, padding);
             framess = framess.Select(f => f.OrderBy(z => z.Number).ToList()).ToList();
             List<Frame> frames = MergeMultiple(framess, fs, background).OrderBy(z => z.Number).ToList();
             return FinalProcess(frames, fs, background);
         }
 
-        private static List<List<Frame>> NormaliseOffsets(List<List<Frame>> framess)
+        private static List<List<Frame>> Translate(List<List<Frame>> framess)
         {
             int minx = framess.SelectMany(x => x).Min(fy => fy.Offset.X);
             int miny = framess.SelectMany(x => x).Min(fy => fy.Offset.Y);

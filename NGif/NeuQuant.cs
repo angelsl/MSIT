@@ -231,8 +231,8 @@ namespace MSIT.NGif
                 int r = (p[pix + 2] & 0xff) << NetBiasShift;
                 int j = Contest(b, g, r);
 
-                Altersingle(alpha, j, b, g, r);
-                if (rad != 0) Alterneigh(rad, j, b, g, r); /* alter neighbours */
+                AlterSingle(alpha, j, b, g, r);
+                if (rad != 0) AlterNeighbour(rad, j, b, g, r); /* alter neighbours */
 
                 pix += step;
                 if (pix >= lim) pix -= _lengthcount;
@@ -328,7 +328,7 @@ namespace MSIT.NGif
         /* Move adjacent neurons by precomputed alpha*(1-((i-j)^2/[r]^2)) in radpower[|i-j|]
 		   --------------------------------------------------------------------------------- */
 
-        private void Alterneigh(int rad, int i, int b, int g, int r)
+        private void AlterNeighbour(int rad, int i, int b, int g, int r)
         {
             int lo = i - rad;
             if (lo < -1) lo = -1;
@@ -362,7 +362,7 @@ namespace MSIT.NGif
         /* Move neuron i towards biased (b,g,r) by factor alpha
 		   ---------------------------------------------------- */
 
-        private void Altersingle(int alpha, int i, int b, int g, int r)
+        private void AlterSingle(int alpha, int i, int b, int g, int r)
         {
             /* alter hit neuron */
             int[] n = _network[i];

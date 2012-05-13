@@ -43,7 +43,7 @@ namespace MSIT
             set.Add("iwzp=|input-wzpath=", "The path of the animation or image. Required", s => aWzInPath = s);
             set.Add("iwzv=|input-wzver=", "The WZ key to use when decoding the WZ. Required", s => aWzVer = (WZVariant)Enum.Parse(typeof(WZVariant), s));
             set.Add("iwzne|input-wz-names-not-encrypted", "Flag if WZ image names are not encrypted. ", s => aWzNamesEnc = false);
-            set.Add("o=|output=", "The method of output: (a)png or gif", s => {
+            set.Add("o=|of=|output-format=", "The method of output: (a)png or gif", s => {
                                                                              switch (s.ToLower()) {
                                                                                  case "png":
                                                                                      aPngOutput = true;
