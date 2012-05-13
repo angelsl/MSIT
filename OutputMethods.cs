@@ -20,6 +20,10 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using MSIT.NGif;
+#if APNG
+using SharpApng;
+using X = SharpApng;
+#endif
 
 namespace MSIT
 {
@@ -53,10 +57,15 @@ namespace MSIT
         {
             f.Save(fn, ImageFormat.Png);
         }
-
+#if APNG
         public static void OutputAPNG(IEnumerable<Frame> frames, String fn)
         {
+            Apng apng = new Apng();
+            foreach (Frame f in frames)
+                apng.AddFrame(f.Image, f.Delay, 1000);
+            apng.WriteApng(fn, false, true);
         }
+#endif
 
     }
 }
