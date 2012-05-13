@@ -30,7 +30,7 @@ namespace MSIT
             if (iwah == null) throw new ArgumentException("The path provided did not lead to an animation; check input-wzfile, input-wzpath and input-wzver");
             List<Frame> r = new List<Frame>();
             foreach (WZObject iwzo in iwah) {
-                WZCanvasProperty iwc = (iwzo is WZUOLProperty ? ((WZUOLProperty)iwzo).ResolveFully() : iwzo) as WZCanvasProperty;
+                WZCanvasProperty iwc = iwzo.ResolveUOL() as WZCanvasProperty;
                 if (iwc == null) continue;
                 int n;
                 if (!int.TryParse(iwzo.Name, out n)) continue;
@@ -50,6 +50,11 @@ namespace MSIT
             WZStringProperty wzStringProperty = izo as WZStringProperty;
             if (wzStringProperty != null) return int.Parse((wzStringProperty).Value);
             throw new FormatException(String.Format("Cannot convert {0} to integer; is not an integer.", izo.GetType().Name));
+        }
+
+        public static WZObject ResolveUOL(this WZObject iwzo)
+        {
+            return (iwzo is WZUOLProperty ? ((WZUOLProperty)iwzo).ResolveFully() : iwzo);
         }
     }
 }

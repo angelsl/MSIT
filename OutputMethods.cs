@@ -15,6 +15,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using MSIT.NGif;
 
@@ -22,10 +24,20 @@ namespace MSIT
 {
     internal static class OutputMethods
     {
-        public static void OutputGIF(IEnumerable<Frame> frames, String fn)
+
+        public static void OutputGIF(Bitmap f, String fn)
+        {
+            GifEncoder gif = new GifEncoder();
+            gif.SetQuality(4);
+            gif.Start(fn);
+            gif.AddFrame(f);
+            gif.Finish();
+        }
+
+        public static void OutputAGIF(IEnumerable<Frame> frames, String fn)
         {
             frames = frames.OrderBy(f => f.Number);
-            AnimatedGifEncoder gif = new AnimatedGifEncoder();
+            GifEncoder gif = new GifEncoder();
             gif.SetQuality(4);
             gif.SetRepeat(0);
             gif.Start(fn);
@@ -34,6 +46,11 @@ namespace MSIT
                 gif.AddFrame(f.Image);
             }
             gif.Finish();
+        }
+
+        public static void OutputPNG(Bitmap f, String fn)
+        {
+            f.Save(fn, ImageFormat.Png);
         }
 #if APNG
         public static void OutputAPNG(IEnumerable<Frame> frames, String fn)

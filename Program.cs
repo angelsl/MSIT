@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Linq;
 using Mono.Options;
 using reWZ;
 using reWZ.WZProperties;
@@ -92,10 +93,11 @@ namespace MSIT
 
                 #region getting single image
 
-                WZCanvasProperty wzcp = wz.ResolvePath(inPath) as WZCanvasProperty;
+                WZCanvasProperty wzcp = wz.ResolvePath(inPath).ResolveUOL() as WZCanvasProperty;
                 if (wzcp != null) {
                     Bitmap b = wzcp.Value;
-                    b.Save(aOutputPath, aPngOutput ? ImageFormat.Png : ImageFormat.Gif);
+                    if(aPngOutput) OutputMethods.OutputPNG(b, aOutputPath);
+                    else OutputMethods.OutputGIF(b, aOutputPath);
                     return;
                 }
 
@@ -119,7 +121,7 @@ namespace MSIT
 #else
             Console.WriteLine("APNG output not supported in this version; outputting GIF.");
 #endif
-                OutputMethods.OutputGIF(final, aOutputPath);
+                OutputMethods.OutputAGIF(final, aOutputPath);
         }
 
         private static void PrintHelp(OptionSet set)
