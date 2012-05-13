@@ -20,7 +20,7 @@ using System.Linq;
 
 namespace MSIT
 {
-    internal class OffsetAnimator
+    internal static class OffsetAnimator
     {
         // Algorithm stolen from haha01haha01 http://code.google.com/p/hasuite/source/browse/trunk/HaRepackerLib/AnimationBuilder.cs
         public static IEnumerable<Frame> Process(Rectangle padding, Color background, params List<Frame>[] zframess)

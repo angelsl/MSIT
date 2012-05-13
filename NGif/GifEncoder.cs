@@ -182,7 +182,7 @@ namespace MSIT.NGif
                     WritePalette(); // local color table
                 WritePixels(); // encode and write pixel data
                 _firstFrame = false;
-            } catch (IOException e) {
+            } catch (IOException) {
                 ok = false;
             }
 
@@ -205,7 +205,7 @@ namespace MSIT.NGif
                 _fs.Flush();
                 if (_closeStream)
                     _fs.Close();
-            } catch (IOException e) {
+            } catch (IOException) {
                 ok = false;
             }
 
@@ -288,7 +288,7 @@ namespace MSIT.NGif
             _fs = os;
             try {
                 WriteString("GIF89a"); // header
-            } catch (IOException e) {
+            } catch (IOException) {
                 ok = false;
             }
             return _started = ok;
@@ -303,12 +303,12 @@ namespace MSIT.NGif
 
         public bool Start(String file)
         {
-            bool ok = true;
+            bool ok;
             try {
                 _fs = new FileStream(file, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
                 ok = Start(_fs);
                 _closeStream = true;
-            } catch (IOException e) {
+            } catch (IOException) {
                 ok = false;
             }
             return _started = ok;
@@ -527,7 +527,7 @@ namespace MSIT.NGif
 
         private void WritePixels()
         {
-            LZWEncoder encoder = new LZWEncoder(_width, _height, _indexedPixels, _colorDepth);
+            LZWEncoder encoder = new LZWEncoder(_indexedPixels, _colorDepth);
             encoder.Encode(_fs);
         }
 

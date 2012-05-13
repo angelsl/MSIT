@@ -28,7 +28,7 @@ namespace MSIT.NGif
 {
     public class LZWEncoder
     {
-        private static readonly int EOF = -1;
+        private const int EOF = -1;
 
         // GIFCOMPR.C       - GIF Image compression routines
         //
@@ -37,10 +37,10 @@ namespace MSIT.NGif
 
         // General DEFINEs
 
-        private static readonly int BITS = 12;
+        private const int Bits = 12;
 
-        private static readonly int HSIZE = 5003; // 80% occupancy
-        private readonly byte[] accum = new byte[256];
+        private const int HSize = 5003; // 80% occupancy
+        private readonly byte[] _accum = new byte[256];
 
         // GIF Image compression - modified 'compress'
         //
@@ -53,21 +53,19 @@ namespace MSIT.NGif
         //              James A. Woods         (decvax!ihnp4!ames!jaw)
         //              Joe Orost              (decvax!vax135!petsd!joe)
 
-        private readonly int[] codetab = new int[HSIZE];
+        private readonly int[] _codetab = new int[HSize];
 
-        private readonly int hsize = HSIZE; // for dynamic table sizing
-        private readonly int[] htab = new int[HSIZE];
-        private readonly int initCodeSize;
-        private readonly int[] masks = {0x0000, 0x0001, 0x0003, 0x0007, 0x000F, 0x001F, 0x003F, 0x007F, 0x00FF, 0x01FF, 0x03FF, 0x07FF, 0x0FFF, 0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF};
-        private readonly int maxbits = BITS; // user settable max # bits/code
-        private readonly int maxmaxcode = 1 << BITS; // should NEVER generate this code
-        private readonly byte[] pixAry;
+        private readonly int[] _htab = new int[HSize];
+        private readonly int _initCodeSize;
+        private readonly int[] _masks = {0x0000, 0x0001, 0x0003, 0x0007, 0x000F, 0x001F, 0x003F, 0x007F, 0x00FF, 0x01FF, 0x03FF, 0x07FF, 0x0FFF, 0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF};
+        private const int MaxMaxCode = 1 << Bits; // should NEVER generate this code
+        private readonly byte[] _pixAry;
 
-        private int ClearCode;
-        private int EOFCode;
-        private int a_count;
-        private bool clear_flg;
-        private int curPixel;
+        private int _clearCode;
+        private int _eofCode;
+        private int _aCount;
+        private bool _clearFlg;
+        private int _curPixel;
 
         // output
         //
@@ -84,30 +82,26 @@ namespace MSIT.NGif
         // fit in it exactly).  Use the VAX insv instruction to insert each
         // code in turn.  When the buffer fills up empty it and start over.
 
-        private int cur_accum;
-        private int cur_bits;
-        private int free_ent; // first unused entry
-        private int g_init_bits;
-        private int imgH;
-        private int imgW;
-        private int maxcode; // maximum code, given n_bits
-        private int n_bits; // number of bits/code
+        private int _curAccum;
+        private int _curBits;
+        private int _freeEnt; // first unused entry
+        private int _gInitBits;
+        private int _maxcode; // maximum code, given n_bits
+        private int _nBits; // number of bits/code
 
         //----------------------------------------------------------------------------
-        public LZWEncoder(int width, int height, byte[] pixels, int color_depth)
+        public LZWEncoder(byte[] pixels, int colorDepth)
         {
-            imgW = width;
-            imgH = height;
-            pixAry = pixels;
-            initCodeSize = Math.Max(2, color_depth);
+            _pixAry = pixels;
+            _initCodeSize = Math.Max(2, colorDepth);
         }
 
         // Add a character to the end of the current packet, and if it is 254
         // characters, flush the packet to disk.
         private void Add(byte c, Stream outs)
         {
-            accum[a_count++] = c;
-            if (a_count >= 254) Flush(outs);
+            _accum[_aCount++] = c;
+            if (_aCount >= 254) Flush(outs);
         }
 
         // Clear out the hash table
@@ -115,112 +109,99 @@ namespace MSIT.NGif
         // table clear for block compress
         private void ClearTable(Stream outs)
         {
-            ResetCodeTable(hsize);
-            free_ent = ClearCode + 2;
-            clear_flg = true;
+            ResetCodeTable(HSize);
+            _freeEnt = _clearCode + 2;
+            _clearFlg = true;
 
-            Output(ClearCode, outs);
+            Output(_clearCode, outs);
         }
 
         // reset code table
-        private void ResetCodeTable(int hsize)
+        private void ResetCodeTable(int hsizep)
         {
-            for (int i = 0; i < hsize; ++i) htab[i] = -1;
+            for (int i = 0; i < hsizep; ++i) _htab[i] = -1;
         }
 
-        private void Compress(int init_bits, Stream outs)
+        private void Compress(int initBits, Stream outs)
         {
-            int fcode;
-            int i /* = 0 */;
-            int c;
-            int ent;
-            int disp;
-            int hsize_reg;
-            int hshift;
-
             // Set up the globals:  g_init_bits - initial number of bits
-            g_init_bits = init_bits;
+            _gInitBits = initBits;
 
             // Set up the necessary values
-            clear_flg = false;
-            n_bits = g_init_bits;
-            maxcode = MaxCode(n_bits);
+            _clearFlg = false;
+            _nBits = _gInitBits;
+            _maxcode = MaxCode(_nBits);
 
-            ClearCode = 1 << (init_bits - 1);
-            EOFCode = ClearCode + 1;
-            free_ent = ClearCode + 2;
+            _clearCode = 1 << (initBits - 1);
+            _eofCode = _clearCode + 1;
+            _freeEnt = _clearCode + 2;
 
-            a_count = 0; // clear packet
+            _aCount = 0; // clear packet
 
-            ent = NextPixel();
+            int ent = NextPixel();
 
-            hshift = 0;
-            for (fcode = hsize; fcode < 65536; fcode *= 2) ++hshift;
+            int hshift = 0;
+            for (int i = HSize; i < 65536; i *= 2) ++hshift;
             hshift = 8 - hshift; // set hash code range bound
+            ResetCodeTable(HSize); // clear hash table
 
-            hsize_reg = hsize;
-            ResetCodeTable(hsize_reg); // clear hash table
+            Output(_clearCode, outs);
 
-            Output(ClearCode, outs);
-
-            outer_loop :
+            int c;
+            outer_loop:
             while ((c = NextPixel()) != EOF) {
-                fcode = (c << maxbits) + ent;
-                i = (c << hshift) ^ ent; // xor hashing
+                int fcode = (c << Bits) + ent;
+                int i = (c << hshift) ^ ent /* = 0 */;
 
-                if (htab[i] == fcode) {
-                    ent = codetab[i];
+                if (_htab[i] == fcode) {
+                    ent = _codetab[i];
                     continue;
-                } else if (htab[i] >= 0) // non-empty slot
+                }
+                if (_htab[i] >= 0) // non-empty slot
                 {
-                    disp = hsize_reg - i; // secondary hash (after G. Knott)
+                    int disp = HSize - i;
                     if (i == 0) disp = 1;
                     do {
-                        if ((i -= disp) < 0) i += hsize_reg;
+                        if ((i -= disp) < 0) i += HSize;
 
-                        if (htab[i] == fcode) {
-                            ent = codetab[i];
-                            goto outer_loop;
-                        }
-                    } while (htab[i] >= 0);
+                        if (_htab[i] != fcode) continue;
+                        ent = _codetab[i];
+                        goto outer_loop;
+                    } while (_htab[i] >= 0);
                 }
                 Output(ent, outs);
                 ent = c;
-                if (free_ent < maxmaxcode) {
-                    codetab[i] = free_ent++; // code -> hashtable
-                    htab[i] = fcode;
+                if (_freeEnt < MaxMaxCode) {
+                    _codetab[i] = _freeEnt++; // code -> hashtable
+                    _htab[i] = fcode;
                 } else ClearTable(outs);
             }
             // Put out the final code.
             Output(ent, outs);
-            Output(EOFCode, outs);
+            Output(_eofCode, outs);
         }
 
         //----------------------------------------------------------------------------
         public void Encode(Stream os)
         {
-            os.WriteByte(Convert.ToByte(initCodeSize)); // write "initial code size" byte
-
-            curPixel = 0;
-
-            Compress(initCodeSize + 1, os); // compress and write the pixel data
-
+            os.WriteByte((byte)_initCodeSize); // write "initial code size" byte
+            _curPixel = 0;
+            Compress(_initCodeSize + 1, os); // compress and write the pixel data
             os.WriteByte(0); // write block terminator
         }
 
         // Flush the packet to disk, and reset the accumulator
         private void Flush(Stream outs)
         {
-            if (a_count > 0) {
-                outs.WriteByte(Convert.ToByte(a_count));
-                outs.Write(accum, 0, a_count);
-                a_count = 0;
-            }
+            if (_aCount <= 0) return;
+            outs.WriteByte(Convert.ToByte(_aCount));
+            outs.Write(_accum, 0, _aCount);
+            _aCount = 0;
         }
 
-        private int MaxCode(int n_bits)
+        private static int MaxCode(int nBitsp)
         {
-            return (1 << n_bits) - 1;
+            return (1 << nBitsp) - 1;
         }
 
         //----------------------------------------------------------------------------
@@ -229,49 +210,48 @@ namespace MSIT.NGif
 
         private int NextPixel()
         {
-            if (curPixel <= pixAry.GetUpperBound(0)) {
-                byte pix = pixAry[curPixel++];
+            if (_curPixel <= _pixAry.GetUpperBound(0)) {
+                byte pix = _pixAry[_curPixel++];
                 return pix & 0xff;
-            } else return (EOF);
+            }
+            return EOF;
         }
 
         private void Output(int code, Stream outs)
         {
-            cur_accum &= masks[cur_bits];
+            _curAccum &= _masks[_curBits];
 
-            if (cur_bits > 0) cur_accum |= (code << cur_bits);
-            else cur_accum = code;
+            if (_curBits > 0) _curAccum |= (code << _curBits);
+            else _curAccum = code;
 
-            cur_bits += n_bits;
+            _curBits += _nBits;
 
-            while (cur_bits >= 8) {
-                Add((byte)(cur_accum & 0xff), outs);
-                cur_accum >>= 8;
-                cur_bits -= 8;
+            while (_curBits >= 8) {
+                Add((byte)(_curAccum & 0xff), outs);
+                _curAccum >>= 8;
+                _curBits -= 8;
             }
 
             // If the next entry is going to be too big for the code size,
             // then increase it, if possible.
-            if (free_ent > maxcode || clear_flg)
-                if (clear_flg) {
-                    maxcode = MaxCode(n_bits = g_init_bits);
-                    clear_flg = false;
+            if (_freeEnt > _maxcode || _clearFlg)
+                if (_clearFlg) {
+                    _maxcode = MaxCode(_nBits = _gInitBits);
+                    _clearFlg = false;
                 } else {
-                    ++n_bits;
-                    if (n_bits == maxbits) maxcode = maxmaxcode;
-                    else maxcode = MaxCode(n_bits);
+                    ++_nBits;
+                    _maxcode = _nBits == Bits ? MaxMaxCode : MaxCode(_nBits);
                 }
 
-            if (code == EOFCode) {
-                // At EOF, write the rest of the buffer.
-                while (cur_bits > 0) {
-                    Add((byte)(cur_accum & 0xff), outs);
-                    cur_accum >>= 8;
-                    cur_bits -= 8;
-                }
-
-                Flush(outs);
+            if (code != _eofCode) return;
+            // At EOF, write the rest of the buffer.
+            while (_curBits > 0) {
+                Add((byte)(_curAccum & 0xff), outs);
+                _curAccum >>= 8;
+                _curBits -= 8;
             }
+
+            Flush(outs);
         }
     }
 }

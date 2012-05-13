@@ -20,8 +20,8 @@ namespace MSIT
     internal class Frame
     {
         public int Delay;
-        public Bitmap Image;
-        public int Number;
+        public readonly Bitmap Image;
+        public readonly int Number;
         public Point Offset;
 
         public Frame(int no, Bitmap image, Point offset, int delay)
