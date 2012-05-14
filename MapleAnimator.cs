@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with MSIT.  If not, see <http://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -23,13 +24,13 @@ namespace MSIT
     internal static class OffsetAnimator
     {
         // Algorithm stolen from haha01haha01 http://code.google.com/p/hasuite/source/browse/trunk/HaRepackerLib/AnimationBuilder.cs
-        public static IEnumerable<Frame> Process(Rectangle padding, Color background, params List<Frame>[] zframess)
+        public static IEnumerable<Frame> Process(Rectangle padding, Color background, LoopType loop, params List<Frame>[] zframess)
         {
             List<List<Frame>> framess = zframess.Select(aframess => aframess.Select(f => new Frame(f.Number, f.Image, new Point(-f.Offset.X, -f.Offset.Y), f.Delay)).ToList()).ToList();
             framess = PadOffsets(Translate(framess), padding);
             Size fs = GetFrameSize(framess, padding);
             framess = framess.Select(f => f.OrderBy(z => z.Number).ToList()).ToList();
-            List<Frame> frames = MergeMultiple(framess, fs, background).OrderBy(z => z.Number).ToList();
+            List<Frame> frames = MergeMultiple(framess, fs, background, loop).OrderBy(z => z.Number).ToList();
             return FinalProcess(frames, fs, background);
         }
 
@@ -53,7 +54,7 @@ namespace MSIT
             return new Size(w, h);
         }
 
-        private static List<Frame> MergeMultiple(List<List<Frame>> framess, Size fs, Color bg)
+        private static List<Frame> MergeMultiple(List<List<Frame>> framess, Size fs, Color bg, LoopType looping)
         {
             if (framess.Count() == 1) return framess.First();
             List<Frame> merged = new List<Frame>();
@@ -61,9 +62,11 @@ namespace MSIT
                                                                                                  x.MoveNext();
                                                                                                  return x;
                                                                                              }).ToList();
-            int no = 0;
+            int no = 0, origCount = ers.Count, timeLeft = framess.Max(x => x.Sum(y => y.OriginalDelay));
+            bool loop = looping == LoopType.LoopEnough || looping == LoopType.FullLoop;
             while (ers.Count > 0) {
                 int mindelay = ers.Min(x => x.Current.Delay);
+                timeLeft -= mindelay;
                 ers.ForEach(f => f.Current.Delay -= mindelay);
                 Bitmap b = new Bitmap(fs.Width, fs.Height);
                 Graphics g = Graphics.FromImage(b);
@@ -72,10 +75,13 @@ namespace MSIT
                 g.Flush(FlushIntention.Sync);
                 g.Dispose();
                 merged.Add(new Frame(no++, b, new Point(0, 0), mindelay));
-                ers = ers.Where(e => e.Current.Delay > 0 || e.MoveNext()).Select(e => {
-                                                                                     if (e.Current.Delay <= 0) e.MoveNext();
-                                                                                     return e;
-                                                                                 }).ToList();
+                bool shouldLoop = !ers.TrueForAll(e => e.Current.Delay <= 0 && !e.MoveNext()) && loop;
+                ers = ers.Where(e => e.Current.Delay > 0 || e.MoveNext() || shouldLoop).Select(e => {
+                                                                                             if (e.Current.Delay > 0 || (e.Current.Delay <= 0 && e.MoveNext())) return e;
+                                                                                             return Fix(e, looping, ref timeLeft);
+                                                                                         }).ToList();
+                if (looping == LoopType.CutOnEnd && ers.Count < origCount)
+                    break;
             }
             return merged;
         }
@@ -88,9 +94,66 @@ namespace MSIT
                                     g.FillRectangle(new SolidBrush(bg), 0, 0, b.Width, b.Height);
                                     g.DrawImage(n.Image, n.Offset);
                                     g.Flush(FlushIntention.Sync);
-                                    g.Dispose();            
+                                    g.Dispose();
                                     return new Frame(n.Number, b, new Point(0, 0), n.Delay);
                                 }).ToList();
         }
+
+        private static List<Frame>.Enumerator Fix(List<Frame>.Enumerator e, LoopType l, ref int timeLeft)
+        {
+            IEnumerator<Frame> f = e;
+            switch (l) {
+                case LoopType.LoopEnough:
+                {
+                    f.Reset();
+                    int tL = timeLeft;
+                    while(f.MoveNext() && timeLeft > 0 && f.Current != null) {
+                        f.Current.Delay = Math.Min(tL, f.Current.OriginalDelay);
+                        tL -= f.Current.Delay;
+                    }
+                    f.Reset();
+                    f.MoveNext();
+                    return (List<Frame>.Enumerator)f;
+                }
+                case LoopType.FullLoop:
+                {
+                    f.Reset();
+                    int tL = 0;
+                    while (f.MoveNext() && f.Current != null) {
+                        tL += f.Current.OriginalDelay;
+                        f.Current.Delay = f.Current.OriginalDelay;
+                    }
+                    timeLeft = Math.Max(timeLeft, tL);
+                    f.Reset();
+                    f.MoveNext();
+                    return (List<Frame>.Enumerator)f;
+                }
+                default:
+                    throw new InvalidOperationException("OffsetAnimator.Fix called with invalid LoopType!");
+            }
+        }
+    }
+
+    internal enum LoopType
+    {
+        /// <summary>
+        ///   Does not loop any animations; in a multi-animation set, an animation that ends before the longest animation will not be repeated and simply end.
+        /// </summary>
+        NoLoop = 0,
+
+        /// <summary>
+        ///   Ends the entire set when any animation ends.
+        /// </summary>
+        CutOnEnd,
+
+        /// <summary>
+        ///   An animation that ends before the longest animation will be repeated until the longest animation ends.
+        /// </summary>
+        LoopEnough,
+
+        /// <summary>
+        ///   Animations will be repeated such they are not cut before the longest animation ends, and they are not cut midway through a repetition.
+        /// </summary>
+        FullLoop
     }
 }

@@ -37,6 +37,7 @@ namespace MSIT
             WZVariant aWzVer = (WZVariant)int.MinValue;
             string aOutputPath = null;
             Color aBgColor = Color.Black;
+            LoopType aLoop = LoopType.NoLoop;
             int aPadding = 10;
             // input, input-wzfile, input-wzpath, input-wzver, output, output-path, background-color, padding
             OptionSet set = new OptionSet();
@@ -56,8 +57,9 @@ namespace MSIT
                                                                              }
                                                                          });
             set.Add("op=|output-path=", "The path to write the output, (A)PNG or GIF, to", s => aOutputPath = s);
-            set.Add("abg=|a-background-color=", "The background color of the animated output. Default is black. Ignored if /animated is not set.", s => aBgColor = Color.FromArgb(int.Parse(s)));
-            set.Add("ap=|a-padding=", "The amount of padding in pixels to pad the animated output with. Default is 10. Ignored if /animated is not set.", s => aPadding = int.Parse(s));
+            set.Add("abg=|a-background-color=", "The background color of the animated output. Default is black. Ignored if there is no animation.", s => aBgColor = Color.FromArgb(int.Parse(s)));
+            set.Add("ap=|a-padding=", "The amount of padding in pixels to pad the animated output with. Default is 10. Ignored if there is no animation.", s => aPadding = int.Parse(s));
+            set.Add("al=|a-looping=", "The method to loop multi-animations with. Default is NoLoop. Ignored if there is no animation.", s => aLoop = (LoopType)Enum.Parse(typeof(LoopType), s, true));
             set.Add("?|h|help", "Shows help", s => printHelp = true);
             set.Parse(args);
 
@@ -75,20 +77,21 @@ namespace MSIT
 
             string[] wzpaths = aWzInPath.Split('*');
             List<List<Frame>> framess = new List<List<Frame>>();
-            string path = null;
-            foreach (string wzpath in wzpaths) {
-                string[] split = wzpath.Split('?');
+            string newPath = null, cWzPath = null;
+            WZFile wz = null;
+            foreach (string[] split in wzpaths.Select(wzpath => wzpath.Split('?'))) {
                 string inPath;
-                if (path != null && split.Length == 1) inPath = split[0];
+                if (newPath != null && split.Length == 1) inPath = split[0];
                 else {
-                    path = split[0];
+                    newPath = split[0];
                     inPath = split[1];
                 }
+                if (cWzPath != newPath && wz != null) wz.Dispose();
 
                 #region wz parsing
 
-                WZFile wz = new WZFile(path, aWzVer, aWzNamesEnc);
-
+                if(cWzPath != newPath) wz = new WZFile(newPath, aWzVer, aWzNamesEnc);
+                cWzPath = newPath;
                 #endregion
 
                 #region getting single image
@@ -111,9 +114,8 @@ namespace MSIT
                     Console.WriteLine(e);
                     throw;
                 }
-                wz.Dispose();
             }
-            IEnumerable<Frame> final = OffsetAnimator.Process(new Rectangle(aPadding, aPadding, aPadding, aPadding), aBgColor, framess.ToArray());
+            IEnumerable<Frame> final = OffsetAnimator.Process(new Rectangle(aPadding, aPadding, aPadding, aPadding), aBgColor, aLoop, framess.ToArray());
             framess.ForEach(f => f.ForEach(g => g.Image.Dispose()));
             if (aPngOutput)
 #if APNG

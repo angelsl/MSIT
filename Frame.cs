@@ -19,6 +19,7 @@ namespace MSIT
 {
     internal class Frame
     {
+        public readonly int OriginalDelay;
         public int Delay;
         public readonly Bitmap Image;
         public readonly int Number;
@@ -29,7 +30,7 @@ namespace MSIT
             Number = no;
             Image = image;
             Offset = offset;
-            Delay = delay;
+            Delay = OriginalDelay = delay;
         }
     }
 }
