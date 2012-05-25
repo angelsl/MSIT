@@ -146,7 +146,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\reWZ\reWZ\reWZ.csproj">
+    <ProjectReference Include="..\reWZ\reWZ.csproj">
       <Project>{85F7FE6D-63AC-44A1-83D2-CE5204E7535E}</Project>
       <Name>reWZ</Name>
     </ProjectReference>
@@ -161,9 +161,6 @@
     <Content Include="apng.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="libpng15.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
@@ -173,7 +170,6 @@ rmdir /S /Q MSIT
 mkdir MSIT
 if $(PlatformName)==x86 (
  copy /V zlib1.dll /B MSIT\
- copy /V libpng15.dll /B MSIT\
  copy /V apng.dll /B MSIT\
 )
 copy /V MSIT_.exe /B MSIT\MSIT.exe
