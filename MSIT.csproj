@@ -93,12 +93,10 @@
     <CodeAnalysisRuleSetDirectories>;D:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets;D:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisRuleDirectories>;D:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules;D:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>APNG</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -111,6 +109,7 @@
     <CodeAnalysisRuleSetDirectories>;D:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets;D:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisRuleDirectories>;D:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules;D:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <DefineConstants>APNG</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Frame.cs" />
@@ -168,19 +167,19 @@
 ilmerge /v2 /out:MSIT_.exe MSIT.exe reWZ.dll
 rmdir /S /Q MSIT
 mkdir MSIT
-if $(PlatformName)==x86 (
  copy /V zlib1.dll /B MSIT\
+if $(PlatformName)==x86 (
  copy /V apng.dll /B MSIT\
 )
 copy /V MSIT_.exe /B MSIT\MSIT.exe
 if $(PlatformName) == x86 (
  cd MSIT
- 7z a -tzip MSIT_x86.zip *
-copy /V MSIT_x86.zip /B ..\..\..\
+ 7z a -tzip MSIT_apng.zip *
+copy /V MSIT_apng.zip /B ..\..\..\
 ) else (
 cd MSIT
-7z a -tzip MSIT_any.zip *
-copy /V MSIT_any.zip /B ..\..\..\
+7z a -tzip MSIT.zip *
+copy /V MSIT.zip /B ..\..\..\
 )</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
