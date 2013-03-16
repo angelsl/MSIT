@@ -35,7 +35,7 @@ Algorithm taken from [HaRepacker](http://community.kryptodev.com/thread-release-
 
 ### Thanks
 
-* Fiel_... of course!_
+* Fiel _... of course!_
 * haha01haha01
 * retep998 from [NoLifeStory](http://code.google.com/p/nolifestory/)
 
