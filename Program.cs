@@ -26,7 +26,17 @@ namespace MSIT
 {
     internal static class Program
     {
-        private static void Main(string[] args)
+        private static int Main(string[] args) {
+            try {
+                Main(args);
+                return 0;
+            } catch (Exception e) {
+                Console.WriteLine("MSIT excepted.");
+                Console.WriteLine(e.ToString());
+            }
+            return 1;
+        }
+        private static void MainMain(string[] args)
         {
             #region getopt
 
