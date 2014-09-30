@@ -28,7 +28,7 @@ namespace MSIT
     {
         private static int Main(string[] args) {
             try {
-                Main(args);
+                MainMain(args);
                 return 0;
             } catch (Exception e) {
                 Console.WriteLine("MSIT excepted.");
