@@ -161,24 +161,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if $(ConfigurationName)==Debug exit
-ilmerge /v2 /out:MSIT_.exe MSIT.exe reWZ.dll
-rmdir /S /Q MSIT
-mkdir MSIT
- copy /V zlib1.dll /B MSIT\
-if $(PlatformName)==x86 (
- copy /V apng.dll /B MSIT\
-)
-copy /V MSIT_.exe /B MSIT\MSIT.exe
-if $(PlatformName) == x86 (
- cd MSIT
- 7z a -tzip MSIT_apng.zip *
-copy /V MSIT_apng.zip /B ..\..\..\
-) else (
-cd MSIT
-7z a -tzip MSIT.zip *
-copy /V MSIT.zip /B ..\..\..\
-)</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
